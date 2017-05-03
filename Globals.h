@@ -29,11 +29,13 @@ struct Move {
 
 /* array size for pieceBB array */
 
-#define SIZE 16
+#define PIECE_BB_SIZE 16
+#define INDEX_BB_SIZE 64
 
 /* pieceBB is an array containing bitboards for all pieces */
 
-u64 pieceBB[SIZE];
+u64 piece_bb[PIECE_BB_SIZE];
+u64 index_bb[INDEX_BB_SIZE];
 
 /* index for white pieces in pieceBB array */
 

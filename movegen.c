@@ -6,47 +6,48 @@
  */
 
 #include <stdbool.h>
+#include "globals.h"
 #include "movegen.h"
 
-u64 generateMoves(bool isWhite, Move moveList, int pos) {
+u64 gen_moves(bool is_white, Move move_list, int pos) {
 
-	pos = genPushes(isWhite, moveList, pos);
-	pos = genAttacks(isWhite, moveList, pos);
-	pos = genSpecialMoves(isWhite, moveList, pos);
-
-	return pos;
-}
-
-u64 generatePushes(bool isWhite, Move moveList, int pos) {
-
-	pos = genKingPushes(isWhite, moveList, pos);
-	pos = genQueenPushes(isWhite, moveList, pos);
-	pos = genBishopPushes(isWhite, moveList, pos);
-	pos = genKnightPushes(isWhite, moveList, pos);
-	pos = genRookPushes(isWhite, moveList, pos);
-	pos = genPawnPushes(isWhite, moveList, pos); /*only single push, double push is considered a special move */
+	pos = gen_pushes(is_white, move_list, pos);
+	pos = gen_attacks(is_white, move_list, pos);
+	pos = gen_special_moves(is_white, move_list, pos);
 
 	return pos;
 }
 
-u64 generateAttacks(bool isWhite, Move moveList, int pos) {
+u64 gen_pushes(bool is_white, Move move_list, int pos) {
 
-	pos = genKingAttacks(isWhite, moveList, pos);
-	pos = genQueenAttacks(isWhite, moveList, pos);
-	pos = genBishopAttacks(isWhite, moveList, pos);
-	pos = genKnightAttacks(isWhite, moveList, pos);
-	pos = genRookAttacks(isWhite, moveList, pos);
-	pos = genPawnAttacks(isWhite, moveList, pos);
+	pos = gen_king_pushes(is_white, move_list, pos);
+	pos = gen_queen_pushes(is_white, move_list, pos);
+	pos = gen_bishop_pushes(is_white, move_list, pos);
+	pos = gen_knight_pushes(is_white, move_list, pos);
+	pos = gen_rook_pushes(is_white, move_list, pos);
+	pos = gen_pawn_pushes(is_white, move_list, pos); /*only single push, double push is considered a special move */
 
 	return pos;
 }
 
-u64 generateSpecialMoves(bool isWhite, Move moveList, int pos) {
+u64 gen_attacks(bool is_white, Move move_list, int pos) {
 
-	pos = genDoublePushes(isWhite, moveList, pos);
-	pos = genCastlingMoves(isWhite, moveList, pos);
-	pos = genEnpassantMoves(isWhite, moveList, pos);
-	pos = genPromotions(isWhite, moveList, pos);
+	pos = gen_king_attacks(is_white, move_list, pos);
+	pos = gen_queen_attacks(is_white, move_list, pos);
+	pos = gen_bishop_attacks(is_white, move_list, pos);
+	pos = gen_knight_attacks(is_white, move_list, pos);
+	pos = gen_rook_attacks(is_white, move_list, pos);
+	pos = gen_pawn_attacks(is_white, move_list, pos);
+
+	return pos;
+}
+
+u64 gen_special_moves(bool isWhite, Move move_list, int pos) {
+
+	pos = gen_double_pushes(is_white, move_list, pos);
+	pos = gen_castling_moves(is_white, move_list, pos);
+	pos = gen_enpassant_moves(is_white, move_list, pos);
+	pos = gen_promotions(is_white, move_list, pos);
 
 	return pos;
 }
@@ -54,15 +55,15 @@ u64 generateSpecialMoves(bool isWhite, Move moveList, int pos) {
 
 /* pushes aka quiet moves */
 
-u64 genKingPushes(bool isWhite, Move movelist, int pos) {
+u64 gen_king_pushes(bool is_white, Move move_list, int pos) {
 	
-	if(isWhite) {
+	if(is_white) {
 	} else {
 	}
 
 }
 
-u64 genQueenPushes(bool is_white, Move move_list, int pos) {
+u64 gen_queen_pushes(bool is_white, Move move_list, int pos) {
 	
 	Move move;
 	u64 queen_bb;
@@ -83,8 +84,8 @@ u64 genQueenPushes(bool is_white, Move move_list, int pos) {
 				const u8 to = bit_scan_forward(pushes);
 				pushes &= pushes - 1;
 
-				move.to = to;
-				move.from = from;
+				move.to = index_bb[to];
+				move.from = index_bb[from];
 				move.movetype = 0;
 
 				move_list[pos++] = move;
@@ -106,8 +107,8 @@ u64 genQueenPushes(bool is_white, Move move_list, int pos) {
 				const u8 to = bit_scan_forward(pushes);
 				pushes &= pushes - 1;
 
-				move.to = to;
-				move.from = from;
+				move.to = index_bb[to];
+				move.from = index_bb[from];
 				move.move_type = 0;
 
 				move_list[pos++] = move;
@@ -117,6 +118,27 @@ u64 genQueenPushes(bool is_white, Move move_list, int pos) {
 	
 	return pos;
 }
+
+u64 generate_bishop_pushes(bool is_white, Move move_list, int pos) {
+	return pos;
+}
+
+u64 generate_knight_pushes(bool is_white, Move move_list, int pos) {
+	return pos;
+}
+
+u64 generate_rook_pushes(bool is_white, Move move_list, int pos) {
+	return pos;
+}
+
+u64 generate_pawn_pushes(bool is_white, Move move_list, int pos) {
+	return pos;
+}
+
+
+
+
+
 			
 
 
