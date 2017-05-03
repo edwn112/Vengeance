@@ -18,11 +18,11 @@ typedef unsigned long long int u64;
 struct Move {
 	int to;        /* to square of a move */
 	int from;	   /* from square of a move */
-	int moveType;  /* 0-pushes, 1-captures, 2-castling, 3-enPassant, 4-promotions, 5-doubleMoves */
+	int movetype;  /* 0-pushes, 1-captures, 2-castling, 3-enPassant, 4-promotions, 5-doubleMoves */
 	int piece;     /* the piece to move */
 	int color;     /* side to which piece belongs i.e bb containing all pieces of that color*/
-	int cPiece;    /* captured piece */
-	int cColor;    /* side to which the captured piece belongs */
+	int cpiece;    /* captured piece */
+	int ccolor;    /* side to which the captured piece belongs */
 };
 
 #define MAX_MOVES 256;

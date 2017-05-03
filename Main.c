@@ -6,7 +6,7 @@
  */
 
 #include <stdio.h>
-#include "Globals.h"
+#include "globals.h"
 
 void init();
 
