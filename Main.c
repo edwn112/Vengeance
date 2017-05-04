@@ -7,15 +7,17 @@
 
 #include <stdio.h>
 #include "globals.h"
+#include "utility.h"
 
-void init();
+void init_piece_bb();
+void init_index_bb();
 
 int main(int argc, char **argv) {
 
 	init_piece_bb(); /* initalize pieceBB array */
 	init_index_bb();
 
-	for(int i = 0; i < SIZE; i++) {
+	for(int i = 0; i < PIECE_BB_SIZE; i++) {
 		
 		printf("%llu\n", piece_bb[i]);
 	}
@@ -23,8 +25,7 @@ int main(int argc, char **argv) {
 	printf("\n\n\n");
 
 	for(int j = 0; j < INDEX_BB_SIZE; j++) {
-
-		printf("%llu\n", index_bb[j]);
+		print_bb(index_bb[j]);
 	}
 
 	return 0;
@@ -51,8 +52,8 @@ void init_piece_bb() {
 	piece_bb[BLACK_PAWNS] = 0x00FF000000000000U;
 	piece_bb[BLACK_PIECES] = 0xFFFF000000000000U;
 
-	piece_bb[OCCUPIED_SQUARES] = 0xFFFF00000000FFFFU;
-	piece_bb[EMPTY_SQUARES] = 0x0000FFFFFFFF0000U;
+	piece_bb[OCCUPIED] = 0xFFFF00000000FFFFU;
+	piece_bb[EMPTY] = 0x0000FFFFFFFF0000U;
 
 }
 
@@ -84,7 +85,7 @@ void init_index_bb() {
 	index_bb[23] = 0x0000000000800000U;
 	index_bb[24] = 0x0000000001000000U;
 	index_bb[25] = 0x0000000002000000U;
-	index_bb[26] = 0x0000000004000000U:
+	index_bb[26] = 0x0000000004000000U;
 	index_bb[27] = 0x0000000008000000U;
 	index_bb[28] = 0x0000000010000000U;
 	index_bb[29] = 0x0000000020000000U;

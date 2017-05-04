@@ -13,18 +13,6 @@ typedef unsigned int u16;
 typedef unsigned long int u32;
 typedef unsigned long long int u64;
 
-/* structure to hold a move */
-
-struct Move {
-	int to;        /* to square of a move */
-	int from;	   /* from square of a move */
-	int movetype;  /* 0-pushes, 1-captures, 2-castling, 3-enPassant, 4-promotions, 5-doubleMoves */
-	int piece;     /* the piece to move */
-	int color;     /* side to which piece belongs i.e bb containing all pieces of that color*/
-	int cpiece;    /* captured piece */
-	int ccolor;    /* side to which the captured piece belongs */
-};
-
 #define MAX_MOVES 256;
 
 /* array size for pieceBB array */
@@ -59,7 +47,7 @@ u64 index_bb[INDEX_BB_SIZE];
 
 /* index for occupied and empty squares in pieceBB array */
 
-#define OCCUPIED_SQUARES 14
-#define EMPTY_SQUARES 15
+#define OCCUPIED 14
+#define EMPTY 15
 
 #endif /* GLOBALS_H_ */
