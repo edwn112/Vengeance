@@ -10,7 +10,7 @@
 #include "magicmoves.h"
 #include "utility.h"
 
-inline u64 gen_moves(bool is_white, u32 *move_list) {
+u64 gen_moves(bool is_white, u32 *move_list) {
 
 	u8 pos = 0;
 

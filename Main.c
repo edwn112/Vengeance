@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 	init_piece_bb(); /* initalize pieceBB array */
 	init_index_bb();
 
-	initmagicmoves();
+	initmagicmoves(); 
 
 /* for(int i = 0; i < PIECE_BB_SIZE; i++) {
 		
@@ -34,9 +34,7 @@ int main(int argc, char **argv) {
 	u32 move_list[MAX_MOVES], *ptr;
 	ptr = &move_list[0];
 
-	u8 nodes = gen_moves(true, ptr);
-
-	printf("%d\n", nodes);
+	gen_moves(true, ptr);
 
 	return 0;
 }

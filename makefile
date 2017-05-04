@@ -9,7 +9,7 @@ main.o:	main.c
 movegen.o:	movegen.c
 	clang -c movegen.c
 
-magic_moves.o:	magicmoves.c
+magicmoves.o:	magicmoves.c
 	clang -c magicmoves.c
 
 nonslidingmoves.o:	nonslidingmoves.c
