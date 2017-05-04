@@ -5,12 +5,10 @@
  *      Author: Amar Thapa
  */
 
-#include <stdio.h>
-#include <stdbool.h>
 #include "globals.h"
 #include "utility.h"
 #include "movegen.h"
-#include "magic_moves.h"
+#include "magicmoves.h"
 
 void init_piece_bb();
 void init_index_bb();
@@ -21,7 +19,7 @@ int main(int argc, char **argv) {
 	init_index_bb();
 
 	initmagicmoves();
-	
+
 /* for(int i = 0; i < PIECE_BB_SIZE; i++) {
 		
 		printf("%llu\n", piece_bb[i]);

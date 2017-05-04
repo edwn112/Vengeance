@@ -8,10 +8,15 @@
 #ifndef GLOBALS_H_
 #define GLOBALS_H_
 
+#include <stdbool.h>
+#include <stdio.h>
+
 typedef unsigned char u8;
 typedef unsigned int u16;
 typedef unsigned long int u32;
 typedef unsigned long long int u64;
+
+#define C64(constantU64) constantU64
 
 #define MAX_MOVES 256
 

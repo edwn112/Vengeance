@@ -5,11 +5,9 @@
  *      Author: Amar Thapa
  */
 
-#include <stdbool.h>
-#include <stdio.h>
 #include "globals.h"
 #include "movegen.h"
-#include "magic_moves.h"
+#include "magicmoves.h"
 #include "utility.h"
 
 inline u64 gen_moves(bool is_white, u32 *move_list) {
@@ -83,7 +81,6 @@ u64 gen_queen_pushes(bool is_white, u32 *move_list, u8 pos) {
 
 			while(pushes) {
 				const u8 to = bit_scan_forward(pushes);
-				printf("try\n");
 				pushes &= pushes - 1;
 
 			}
@@ -108,6 +105,39 @@ u64 gen_queen_pushes(bool is_white, u32 *move_list, u8 pos) {
 }
 
 u64 gen_bishop_pushes(bool is_white, u32 *move_list, u8 pos) {
+	u64 bishops_bb;
+
+	if(is_white) {
+		bishops_bb = piece_bb[WHITE_BISHOPS];
+		
+		while(bishops_bb) {
+			const u8 from = bit_scan_forward(bishops_bb);
+			bishops_bb &= bishops_bb - 1;
+			
+			u64 pushes = Qmagic(from, piece_bb[OCCUPIED]) & (~piece_bb[OCCUPIED]); 
+
+			while(pushes) {
+				const u8 to = bit_scan_forward(pushes);
+				pushes &= pushes - 1;
+
+			}
+		}
+	} else {
+		bishops_bb = piece_bb[BLACK_BISHOPS];
+
+		while(bishops_bb) {
+			const u8 from = bit_scan_forward(bishops_bb);
+			bishops_bb &= bishops_bb - 1;
+
+			u64 pushes = Bmagic(from, piece_bb[OCCUPIED]) & (~piece_bb[OCCUPIED]);
+
+			while(pushes) {
+				const u8 to = bit_scan_forward(pushes);
+				pushes &= pushes - 1;
+			}
+		}
+	}
+	
 	return pos;
 }
 
@@ -116,6 +146,39 @@ u64 gen_knight_pushes(bool is_white, u32 *move_list, u8 pos) {
 }
 
 u64 gen_rook_pushes(bool is_white, u32 *move_list, u8 pos) {
+	u64 rooks_bb;
+
+	if(is_white) {
+		rooks_bb = piece_bb[WHITE_ROOKS];
+		
+		while(rooks_bb) {
+			const u8 from = bit_scan_forward(rooks_bb);
+			rooks_bb &= rooks_bb - 1;
+			
+			u64 pushes = Rmagic(from, piece_bb[OCCUPIED]) & (~piece_bb[OCCUPIED]); 
+
+			while(pushes) {
+				const u8 to = bit_scan_forward(pushes);
+				pushes &= pushes - 1;
+
+			}
+		}
+	} else {
+		rooks_bb = piece_bb[BLACK_ROOKS];
+
+		while(rooks_bb) {
+			const u8 from = bit_scan_forward(rooks_bb);
+			rooks_bb &= rooks_bb - 1;
+
+			u64 pushes = Rmagic(from, piece_bb[OCCUPIED]) & (~piece_bb[OCCUPIED]);
+
+			while(pushes) {
+				const u8 to = bit_scan_forward(pushes);
+				pushes &= pushes - 1;
+			}
+		}
+	}
+	
 	return pos;
 }
 
