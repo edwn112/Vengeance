@@ -8,7 +8,8 @@
 #ifndef __MOVE_GEN_H__
 #define __MOVE_GEN_H__
 
-inline u64 gen_moves(bool is_white, u32 *move_list);
+
+u64 gen_moves(bool is_white, u32 *move_list);
 
 inline u64 gen_pushes(bool is_white, u32 *move_list, u8 pos);
 inline u64 gen_attacks(bool is_white, u32 *move_list, u8 pos);

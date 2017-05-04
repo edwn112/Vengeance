@@ -10,5 +10,6 @@
 #include "globals.h"
 
 void print_bb(u64 board);
+int bit_scan_forward(u64 board);
 
 #endif

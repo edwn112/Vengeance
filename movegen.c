@@ -6,22 +6,24 @@
  */
 
 #include <stdbool.h>
+#include <stdio.h>
 #include "globals.h"
 #include "movegen.h"
 #include "magic_moves.h"
+#include "utility.h"
 
 inline u64 gen_moves(bool is_white, u32 *move_list) {
 
 	u8 pos = 0;
 
-	pos = gen_pushes(is_white, *move_list, pos);
-	pos = gen_attacks(is_white, *move_list, pos);
-	pos = gen_special_moves(is_white, *move_list, pos);
+	pos = gen_pushes(is_white, move_list, pos);
+	pos = gen_attacks(is_white, move_list, pos);
+	pos = gen_special_moves(is_white, move_list, pos);
 
 	return pos;
 }
 
-inline u64 gen_pushes(bool is_white, u32 *move_list, u8 pos) {
+ u64 gen_pushes(bool is_white, u32 *move_list, u8 pos) {
 
 	pos = gen_king_pushes(is_white, move_list, pos);
 	pos = gen_queen_pushes(is_white, move_list, pos);
@@ -33,7 +35,7 @@ inline u64 gen_pushes(bool is_white, u32 *move_list, u8 pos) {
 	return pos;
 }
 
-inline u64 gen_attacks(bool is_white, u32 *move_list, u8 pos) {
+u64 gen_attacks(bool is_white, u32 *move_list, u8 pos) {
 
 	pos = gen_king_attacks(is_white, move_list, pos);
 	pos = gen_queen_attacks(is_white, move_list, pos);
@@ -45,7 +47,7 @@ inline u64 gen_attacks(bool is_white, u32 *move_list, u8 pos) {
 	return pos;
 }
 
-inline u64 gen_special_moves(bool is_white, u32 *move_list, u8 pos) {
+u64 gen_special_moves(bool is_white, u32 *move_list, u8 pos) {
 
 	pos = gen_double_pushes(is_white, move_list, pos);
 	pos = gen_castling_moves(is_white, move_list, pos);
@@ -58,15 +60,16 @@ inline u64 gen_special_moves(bool is_white, u32 *move_list, u8 pos) {
 
 /* pushes aka quiet moves */
 
-inline u64 gen_king_pushes(bool is_white, u32 *move_list, u8 pos) {
+u64 gen_king_pushes(bool is_white, u32 *move_list, u8 pos) {
 	
 	if(is_white) {
 	} else {
 	}
 
+	return pos;
 }
 
-inline u64 gen_queen_pushes(bool is_white, u32 *move_list, u8 pos) {
+u64 gen_queen_pushes(bool is_white, u32 *move_list, u8 pos) {
 	u64 queen_bb;
 
 	if(is_white) {
@@ -77,9 +80,10 @@ inline u64 gen_queen_pushes(bool is_white, u32 *move_list, u8 pos) {
 			queen_bb &= queen_bb - 1;
 			
 			u64 pushes = Qmagic(from, piece_bb[OCCUPIED]) & (~piece_bb[OCCUPIED]); 
-		
+
 			while(pushes) {
 				const u8 to = bit_scan_forward(pushes);
+				printf("try\n");
 				pushes &= pushes - 1;
 
 			}
@@ -103,21 +107,70 @@ inline u64 gen_queen_pushes(bool is_white, u32 *move_list, u8 pos) {
 	return pos;
 }
 
-inline u64 generate_bishop_pushes(bool is_white, u32 *move_list, u8 pos) {
+u64 gen_bishop_pushes(bool is_white, u32 *move_list, u8 pos) {
 	return pos;
 }
 
-inline u64 generate_knight_pushes(bool is_white, u32 *move_list, u8 pos) {
+u64 gen_knight_pushes(bool is_white, u32 *move_list, u8 pos) {
 	return pos;
 }
 
-inline u64 generate_rook_pushes(bool is_white, u32 *move_list, u8 pos) {
+u64 gen_rook_pushes(bool is_white, u32 *move_list, u8 pos) {
 	return pos;
 }
 
-inline u64 generate_pawn_pushes(bool is_white, u32 *move_list, u8 pos) {
+u64 gen_pawn_pushes(bool is_white, u32 *move_list, u8 pos) {
 	return pos;
 }
+
+/* attacks */
+
+u64 gen_king_attacks(bool is_white, u32 *move_list, u8 pos) {
+	return pos;
+}
+
+u64 gen_queen_attacks(bool is_white, u32 *move_list, u8 pos) {
+	return pos;
+}
+
+u64 gen_bishop_attacks(bool is_white, u32 *move_list, u8 pos) {
+	return pos;
+}
+
+u64 gen_knight_attacks(bool is_white, u32 *move_list, u8 pos) {
+	return pos;
+}
+
+u64 gen_rook_attacks(bool is_white, u32 *move_list, u8 pos) {
+	return pos;
+}
+
+u64 gen_pawn_attacks(bool is_white, u32 *move_list, u8 pos) {
+	return pos;
+}
+
+/* special moves */
+
+u64 gen_double_pushes(bool is_white, u32 *move_list, u8 pos) {
+
+	return pos;
+}
+
+u64 gen_castling_moves(bool is_white, u32 *move_list, u8 pos) {
+
+	return pos;
+}
+
+u64 gen_enpassant_moves(bool is_white, u32 *move_list, u8 pos) {
+
+	return pos;
+}
+
+u64 gen_promotions(bool is_white, u32 *move_list, u8 pos) {
+
+	return pos;
+}
+
 
 
 

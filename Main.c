@@ -6,8 +6,11 @@
  */
 
 #include <stdio.h>
+#include <stdbool.h>
 #include "globals.h"
 #include "utility.h"
+#include "movegen.h"
+#include "magic_moves.h"
 
 void init_piece_bb();
 void init_index_bb();
@@ -17,7 +20,9 @@ int main(int argc, char **argv) {
 	init_piece_bb(); /* initalize pieceBB array */
 	init_index_bb();
 
-	for(int i = 0; i < PIECE_BB_SIZE; i++) {
+	initmagicmoves();
+	
+/* for(int i = 0; i < PIECE_BB_SIZE; i++) {
 		
 		printf("%llu\n", piece_bb[i]);
 	}
@@ -26,7 +31,14 @@ int main(int argc, char **argv) {
 
 	for(int j = 0; j < INDEX_BB_SIZE; j++) {
 		print_bb(index_bb[j]);
-	}
+	} 
+*/
+	u32 move_list[MAX_MOVES], *ptr;
+	ptr = &move_list[0];
+
+	u8 nodes = gen_moves(true, ptr);
+
+	printf("%d\n", nodes);
 
 	return 0;
 }

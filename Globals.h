@@ -13,7 +13,7 @@ typedef unsigned int u16;
 typedef unsigned long int u32;
 typedef unsigned long long int u64;
 
-#define MAX_MOVES 256;
+#define MAX_MOVES 256
 
 /* array size for pieceBB array */
 
