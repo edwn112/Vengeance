@@ -1,7 +1,7 @@
 all:	Vengeance
 
 Vengeance:	main.o  magicmoves.o nonslidingmoves.o movegen.o utility.o
-	clang main.o magicmoves.o nonslidingmoves.o movegen.o utility.o -o Vengeance
+	clang main.o magicmoves.o nonslidingmoves.o movegen.o utility.o -O3 -o Vengeance
 
 main.o:	main.c
 	clang -c main.c

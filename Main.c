@@ -15,26 +15,15 @@ void init_index_bb();
 
 int main(int argc, char **argv) {
 
-	init_piece_bb(); /* initalize pieceBB array */
+	init_piece_bb(); 
 	init_index_bb();
-
 	initmagicmoves(); 
 
-/* for(int i = 0; i < PIECE_BB_SIZE; i++) {
-		
-		printf("%llu\n", piece_bb[i]);
-	}
+	u32 move_list[MAX_MOVES];
 
-	printf("\n\n\n");
+	u8 nodes = gen_moves(&move_list[0]);
 
-	for(int j = 0; j < INDEX_BB_SIZE; j++) {
-		print_bb(index_bb[j]);
-	} 
-*/
-	u32 move_list[MAX_MOVES], *ptr;
-	ptr = &move_list[0];
-
-	gen_moves(true, ptr);
+	printf("%d\n\n", nodes);
 
 	return 0;
 }
@@ -44,25 +33,24 @@ void init_piece_bb() {
 
 	/* default positions of pieces on board */
 
-	piece_bb[WHITE_KING] = 0x0000000000000008U;
-	piece_bb[WHITE_QUEEN] = 0x0000000000000010U;
-	piece_bb[WHITE_BISHOPS] = 0x0000000000000024U;
-	piece_bb[WHITE_KNIGHTS] = 0x0000000000000042U;
-	piece_bb[WHITE_ROOKS] = 0x0000000000000081U;
-	piece_bb[WHITE_PAWNS] = 0x000000000000FF00U;
-	piece_bb[WHITE_PIECES] = 0x000000000000FFFFU;
+	piece_bb[COLOR][KING] = 0x0000000000000008U;
+	piece_bb[COLOR][QUEEN] = 0x0000000000000010U;
+	piece_bb[COLOR][BISHOPS] = 0x0000000000000024U;
+	piece_bb[COLOR][KNIGHTS] = 0x0000000000000042U;
+	piece_bb[COLOR][ROOKS] = 0x0000000000000081U;
+	piece_bb[COLOR][PAWNS] = 0x000000000000FF00U;
+	piece_bb[COLOR][PIECES] = 0x000000000000FFFFU;
 
-	piece_bb[BLACK_KING] = 0x0800000000000000U;
-	piece_bb[BLACK_QUEEN] = 0x1000000000000000U;
-	piece_bb[BLACK_BISHOPS] = 0x2400000000000000U;
-	piece_bb[BLACK_KNIGHTS] = 0x4200000000000000U;
-	piece_bb[BLACK_ROOKS] = 0x8100000000000000U;
-	piece_bb[BLACK_PAWNS] = 0x00FF000000000000U;
-	piece_bb[BLACK_PIECES] = 0xFFFF000000000000U;
+	piece_bb[COLOR ^ 1][KING] = 0x0800000000000000U;
+	piece_bb[COLOR ^ 1][QUEEN] = 0x1000000000000000U;
+	piece_bb[COLOR ^ 1][BISHOPS] = 0x2400000000000000U;
+	piece_bb[COLOR ^ 1][KNIGHTS] = 0x4200000000000000U;
+	piece_bb[COLOR ^ 1][ROOKS] = 0x8100000000000000U;
+	piece_bb[COLOR ^ 1][PAWNS] = 0x00FF000000000000U;
+	piece_bb[COLOR ^ 1][PIECES] = 0xFFFF000000000000U;
 
-	piece_bb[OCCUPIED] = 0xFFFF00000000FFFFU;
-	piece_bb[EMPTY] = 0x0000FFFFFFFF0000U;
-
+	occupied = 0xFFFF00000000FFFFU;
+	empty = 0x0000FFFFFFFF0000U;
 }
 
 void init_index_bb() {
@@ -133,3 +121,9 @@ void init_index_bb() {
 	index_bb[63] = 0x8000000000000000U;
 }
 
+
+u32 create_move(u8 promotion_type, u8 castle_dir, u8 move_type, u8 color, u8 c_piece, u8 piece, u8 from, u8 to) {
+	
+	return (0ull | (u32) promotion_type << 23 | (u32) castle_dir << 21 | (u32) move_type << 19 |
+	 (u32) color << 16 | (u32) c_piece << 15 | (u32) piece << 12 | (u32) from << 6 | (u32) to);
+}
