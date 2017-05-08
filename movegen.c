@@ -8,6 +8,7 @@
 #include "globals.h"
 #include "movegen.h"
 #include "magicmoves.h"
+#include "nonslidingmoves.h"
 #include "utility.h"
 
 u64 gen_moves(u32 *move_list) {
@@ -56,20 +57,32 @@ u64 gen_special_moves(u32 *move_list, u8 pos) {
 }
 
 
-
-
-
 /* pushes aka quiet moves */
 
 u64 gen_king_pushes(u32 *move_list, u8 pos) {
 
+	u64 king_bb = piece_bb[COLOR ^ 1][KING];
+
+	while(king_bb) {
+		const u8 from = bit_scan_forward(king_bb);
+		king_bb &= king_bb - 1;
+
+		u64 pushes  = get_king_attacks(from) & (~occupied);
+
+		while(pushes) {
+			const u8 to = bit_scan_forward(pushes);
+			pushes &= pushes - 1;
+
+			move_list[pos++] = create_move(0, 0, 6, COLOR ^ 1, 7, KING, from, to);
+		}
+	}
 
 	return pos;
 }
 
 u64 gen_queen_pushes(u32 *move_list, u8 pos) {
 	
-	u64 queen_bb = piece_bb[COLOR][QUEEN];
+	u64 queen_bb = piece_bb[COLOR ^ 1][QUEEN];
 
 	while(queen_bb) {
 		const u8 from = bit_scan_forward(queen_bb);
@@ -81,7 +94,7 @@ u64 gen_queen_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, 0, 7, 1, from, to); /* 7 is a dummy value indicating no piece */
+			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, QUEEN, from, to); /* 7 is a dummy value indicating no piece */
 		}
 	}
 
@@ -89,7 +102,7 @@ u64 gen_queen_pushes(u32 *move_list, u8 pos) {
 }
 
 u64 gen_bishop_pushes(u32 *move_list, u8 pos) {
-	u64 bishops_bb = piece_bb[COLOR][BISHOPS];
+	u64 bishops_bb = piece_bb[COLOR ^ 1][BISHOPS];
 			
 	while(bishops_bb) {
 		const u8 from = bit_scan_forward(bishops_bb);
@@ -101,7 +114,7 @@ u64 gen_bishop_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 	
-			move_list[pos++] = create_move(0, 0, 0, 0, 7, 2, from, to); /* 7 is a dummy value indicating no piece */
+			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, BISHOPS, from, to); /* 7 is a dummy value indicating no piece */
 		}
 	}
 
@@ -109,11 +122,28 @@ u64 gen_bishop_pushes(u32 *move_list, u8 pos) {
 }
 
 u64 gen_knight_pushes(u32 *move_list, u8 pos) {
+
+	u64 knights_bb = piece_bb[COLOR ^ 1][KNIGHTS];
+
+	while(knights_bb) {
+		const u8 from = bit_scan_forward(knights_bb);
+		knights_bb &= knights_bb - 1;
+
+		u64 pushes = get_knight_attacks(from) & (~occupied);
+
+		while (pushes) {
+			const u8 to = bit_scan_forward(pushes);
+			pushes &= pushes - 1;
+
+			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, KNIGHTS, from, to);
+		}
+	}
+
 	return pos;
 }
 
 u64 gen_rook_pushes(u32 *move_list, u8 pos) {
-	u64 rooks_bb = piece_bb[COLOR][ROOKS];
+	u64 rooks_bb = piece_bb[COLOR ^ 1][ROOKS];
 		
 	while(rooks_bb) {
 		const u8 from = bit_scan_forward(rooks_bb);
@@ -125,7 +155,7 @@ u64 gen_rook_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, 0, 7, 4, from, to); /* 7 is a dummy value indicating no piece */
+			move_list[pos++] = create_move(0, 0, 0, 0, 7, ROOKS, from, to); /* 7 is a dummy value indicating no piece */
 		}
 	}
 

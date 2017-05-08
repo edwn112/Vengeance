@@ -9,6 +9,7 @@
 #include "utility.h"
 #include "movegen.h"
 #include "magicmoves.h"
+#include "nonslidingmoves.h"
 
 void init_piece_bb();
 void init_index_bb();
@@ -17,13 +18,19 @@ int main(int argc, char **argv) {
 
 	init_piece_bb(); 
 	init_index_bb();
-	initmagicmoves(); 
+	init_king_attacks();
+	init_knight_attacks();
+	init_magic_moves(); 
 
 	u32 move_list[MAX_MOVES];
 
 	u8 nodes = gen_moves(&move_list[0]);
 
-	printf("%d\n\n", nodes);
+	int i;
+	for(i = 0; i < nodes; i++) {
+		printf("%lu ", move_list[i]);
+		printf("%d\n", i);
+	}
 
 	return 0;
 }
@@ -33,21 +40,21 @@ void init_piece_bb() {
 
 	/* default positions of pieces on board */
 
-	piece_bb[COLOR][KING] = 0x0000000000000008U;
-	piece_bb[COLOR][QUEEN] = 0x0000000000000010U;
-	piece_bb[COLOR][BISHOPS] = 0x0000000000000024U;
-	piece_bb[COLOR][KNIGHTS] = 0x0000000000000042U;
-	piece_bb[COLOR][ROOKS] = 0x0000000000000081U;
-	piece_bb[COLOR][PAWNS] = 0x000000000000FF00U;
-	piece_bb[COLOR][PIECES] = 0x000000000000FFFFU;
+	piece_bb[0][KING] = 0x0000000000000008U;
+	piece_bb[0][QUEEN] = 0x0000000000000010U;
+	piece_bb[0][BISHOPS] = 0x0000000000000024U;
+	piece_bb[0][KNIGHTS] = 0x0000000000000042U;
+	piece_bb[0][ROOKS] = 0x0000000000000081U;
+	piece_bb[0][PAWNS] = 0x000000000000FF00U;
+	piece_bb[0][PIECES] = 0x000000000000FFFFU;
 
-	piece_bb[COLOR ^ 1][KING] = 0x0800000000000000U;
-	piece_bb[COLOR ^ 1][QUEEN] = 0x1000000000000000U;
-	piece_bb[COLOR ^ 1][BISHOPS] = 0x2400000000000000U;
-	piece_bb[COLOR ^ 1][KNIGHTS] = 0x4200000000000000U;
-	piece_bb[COLOR ^ 1][ROOKS] = 0x8100000000000000U;
-	piece_bb[COLOR ^ 1][PAWNS] = 0x00FF000000000000U;
-	piece_bb[COLOR ^ 1][PIECES] = 0xFFFF000000000000U;
+	piece_bb[1][KING] = 0x0800000000000000U;
+	piece_bb[1][QUEEN] = 0x1000000000000000U;
+	piece_bb[1][BISHOPS] = 0x2400000000000000U;
+	piece_bb[1][KNIGHTS] = 0x4200000000000000U;
+	piece_bb[1][ROOKS] = 0x8100000000000000U;
+	piece_bb[1][PAWNS] = 0x00FF000000000000U;
+	piece_bb[1][PIECES] = 0xFFFF000000000000U;
 
 	occupied = 0xFFFF00000000FFFFU;
 	empty = 0x0000FFFFFFFF0000U;

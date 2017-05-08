@@ -41,11 +41,11 @@ u64 soWeOne(u64 bb) {
 
 //https://chessprogramming.wikispaces.com/King+Pattern
 
-u64 getKingAttacks(int sq) {
+u64 get_king_attacks(int sq) {
 	return arrKingAttacks[sq];
 }
 
-u64 kingAttacks(u64 kingSet) {
+u64 king_attacks(u64 kingSet) {
 	u64 attacks = eastOne(kingSet) | westOne(kingSet);
 	kingSet |= attacks;
 	attacks |= nortOne(kingSet) | soutOne(kingSet);
@@ -53,18 +53,18 @@ u64 kingAttacks(u64 kingSet) {
 	return attacks;
 }
 
-void initKingAttacks() {
+void init_king_attacks() {
 	u64 sqBB = 1;
 	int sq;
 	for(sq = 0; sq < 64; sq++, sqBB <<= 1)
-		arrKingAttacks[sq] = kingAttacks(sqBB);
+		arrKingAttacks[sq] = king_attacks(sqBB);
 }
 
-u64 getKnightAttacks(int sq) {
+u64 get_knight_attacks(int sq) {
 	return arrKnightAttacks[sq];
 }
 
-u64 knightAttacks(u64 knights) {
+u64 knight_attacks(u64 knights) {
 	u64 west, east, attacks;
    
     east     = eastOne (knights);
@@ -79,12 +79,12 @@ u64 knightAttacks(u64 knights) {
    return attacks;
 }
 
-void initKnightAttacks() {
+void init_knight_attacks() {
 	u64 sqBB = 1;
 	int sq;
 
 	for(sq = 0; sq < 64; sq++, sqBB <<= 1)
-		arrKnightAttacks[sq] = knightAttacks(sqBB);
+		arrKnightAttacks[sq] = knight_attacks(sqBB);
 }
 
 // compute and return moves for pawns

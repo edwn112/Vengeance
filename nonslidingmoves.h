@@ -13,13 +13,13 @@ u64 noWeOne(u64 bb);
 u64 soEaOne(u64 bb);
 u64 soWeOne(u64 bb);
 
-u64 getKingAttacks(int sq);
-u64 kingAttacks(u64 kingSet);
-u64 getKnightAttacks(int sq);
-u64 knightAttacks(u64 knightSet);
+u64 get_king_attacks(int sq);
+u64 king_attacks(u64 kingSet);
+u64 get_knight_attacks(int sq);
+u64 knight_attacks(u64 knightSet);
 
-void initKingAttacks();
-void initKnightAttacks();
+void init_king_attacks();
+void init_knight_attacks();
 
 /*https://chessprogramming.wikispaces.com/Pawn+Pushes+%28Bitboards%29
 */

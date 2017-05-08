@@ -245,6 +245,6 @@ extern const unsigned int magicmoves_r_shift[64];
 
 #endif //USE_INLINING
 
-void initmagicmoves(void);
+void init_magic_moves(void);
 
 #endif //_magicmoveshvesh

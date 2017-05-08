@@ -320,7 +320,7 @@ U64 initmagicmoves_Bmoves(const int square, const U64 occ)
 */
 #endif
 
-void initmagicmoves()
+void init_magic_moves()
 {
 	int i;
 

@@ -20,7 +20,7 @@ typedef unsigned long long int u64;
 
 #define MAX_MOVES 256
 
-#define COLOR 0 /* 0 for white, COLOR ^ 1 = 1 for black */ 
+#define COLOR 1 /* 0 for white, COLOR ^ 1 = 1 for black */ 
 
 /* pieceBB is an array containing bitboards for all pieces */
 
