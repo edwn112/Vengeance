@@ -163,6 +163,24 @@ u64 gen_rook_pushes(u32 *move_list, u8 pos) {
 }
 
 u64 gen_pawn_pushes(u32 *move_list, u8 pos) {
+	u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
+	u64 pawns_single_push_target_squares = ((pawns_bb << 8) >> 16 * (COLOR ^ 1)) & empty;
+
+	while(pawns_single_push_target_squares) {
+		const u8 to = bit_scan_forward(pawns_single_push_target_squares);
+		pawns_single_push_target_squares &= pawns_single_push_target_squares - 1;
+
+		u8 from;
+
+		if(COLOR)
+			from = to << 8;
+		else
+			from = to >> 8;
+
+		move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, 5, from, to);
+
+	}
+
 	return pos;
 }
 
@@ -197,7 +215,26 @@ u64 gen_pawn_attacks(u32 *move_list, u8 pos) {
 /* special moves */
 
 u64 gen_double_pushes(u32 *move_list, u8 pos) {
+	
+	u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
+	u64 pawns_single_push_target_squares = ((pawns_bb << 8) >> 16 * (COLOR ^ 1)) & empty;
 
+	while(pawns_single_push_target_squares) {
+		const u8 to = bit_scan_forward(pawns_single_push_target_squares);
+		pawns_single_push_target_squares &= pawns_single_push_target_squares - 1;
+
+		u8 from;
+
+		if(COLOR)
+			from = to << 8;
+		else
+			from = to >> 8;
+
+		move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, 5, from, to);
+
+	}
+
+	return pos;
 	return pos;
 }
 
