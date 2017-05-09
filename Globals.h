@@ -70,4 +70,9 @@ u32 create_move(u8 promotion_type, u8 castle_dir, u8 move_type, u8 color, u8 c_p
 #define from(move)              (((00000000000000000000111111000000 & move) >> 6))
 #define to(move)                (( 00000000000000000000000000111111 & move))
 
+#define RANK_2 0x000000000000FF00U
+#define RANK_7 0x00FF000000000000U
+
+
+
 #endif /* GLOBALS_H_ */

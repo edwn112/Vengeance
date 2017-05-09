@@ -5,6 +5,8 @@
  *      Author: Amar Thapa
  */
 
+#include <sys\timeb.h>
+
 #include "globals.h"
 #include "utility.h"
 #include "movegen.h"
@@ -16,6 +18,9 @@ void init_index_bb();
 
 int main(int argc, char **argv) {
 
+	struct timeb start, end;
+	u8 diff;
+
 	init_piece_bb(); 
 	init_index_bb();
 	init_king_attacks();
@@ -24,13 +29,20 @@ int main(int argc, char **argv) {
 
 	u32 move_list[MAX_MOVES];
 
+	ftime(&start);
+	
 	u8 nodes = gen_moves(&move_list[0]);
 
 	int i;
 	for(i = 0; i < nodes; i++) {
-		printf("%lu ", move_list[i]);
-		printf("%d\n", i);
+		printf("\n%d\n", i);
 	}
+
+	ftime(&end);
+	diff = (u8)(1000.0 * (end.time - start.time) 
+		+ (end.millitm - start.millitm));
+
+	printf("Operation took %u milliseconds\n", diff);
 
 	return 0;
 }

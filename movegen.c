@@ -13,6 +13,12 @@
 
 u64 gen_moves(u32 *move_list) {
 
+	printf("For side ");
+	if(COLOR ^ 1)
+		printf(" - BLACK\n");
+	else
+		printf(" - WHITE\n");
+	
 	u8 pos = 0;
 
 	pos = gen_pushes(move_list, pos);
@@ -94,7 +100,7 @@ u64 gen_queen_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, QUEEN, from, to); /* 7 is a dummy value indicating no piece */
+			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, QUEEN, from, to); /* 7 is a dummy value indicating no captured piece */
 		}
 	}
 
@@ -114,7 +120,7 @@ u64 gen_bishop_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 	
-			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, BISHOPS, from, to); /* 7 is a dummy value indicating no piece */
+			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, BISHOPS, from, to); /* 7 is a dummy value indicating no captured piece */
 		}
 	}
 
@@ -155,7 +161,7 @@ u64 gen_rook_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, 0, 7, ROOKS, from, to); /* 7 is a dummy value indicating no piece */
+			move_list[pos++] = create_move(0, 0, 0, 0, 7, ROOKS, from, to); /* 7 is a dummy value indicating no captured piece */
 		}
 	}
 
@@ -217,24 +223,32 @@ u64 gen_pawn_attacks(u32 *move_list, u8 pos) {
 u64 gen_double_pushes(u32 *move_list, u8 pos) {
 	
 	u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
-	u64 pawns_single_push_target_squares = ((pawns_bb << 8) >> 16 * (COLOR ^ 1)) & empty;
+	
+	if(COLOR ^ 1) 
+		pawns_bb &= RANK_7;
+	else 
+		pawns_bb &= RANK_2;
 
-	while(pawns_single_push_target_squares) {
-		const u8 to = bit_scan_forward(pawns_single_push_target_squares);
-		pawns_single_push_target_squares &= pawns_single_push_target_squares - 1;
+	u64 pawns_single_push = ((pawns_bb << 8) >> 16 * (COLOR ^ 1));
+
+	u64 pawns_double_push_target_squares = ((pawns_single_push << 8) 
+		>> (16 * (COLOR ^ 1))) & empty;
+
+	while(pawns_double_push_target_squares) {
+		const u8 to = bit_scan_forward(pawns_double_push_target_squares);
+		pawns_double_push_target_squares &= pawns_double_push_target_squares - 1;
 
 		u8 from;
 
 		if(COLOR)
-			from = to << 8;
+			from = to << 16;
 		else
-			from = to >> 8;
+			from = to >> 16;
 
-		move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, 5, from, to);
+		move_list[pos++] = create_move(0, 0, 2, COLOR ^ 1, 7, 5, from, to);
 
 	}
 
-	return pos;
 	return pos;
 }
 
