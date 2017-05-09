@@ -45,10 +45,6 @@ u64 index_bb[INDEX_BB_SIZE];
 
 u64 occupied, empty;
 
-/* encode the move in a 32 bit integer */
-
-u32 create_move(u8 promotion_type, u8 castle_dir, u8 move_type, u8 color, u8 c_piece, u8 piece, u8 from, u8 to);
-
 /*
 *	0 -> quiet moves
 *	1 -> captures

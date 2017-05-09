@@ -140,9 +140,3 @@ void init_index_bb() {
 	index_bb[63] = 0x8000000000000000U;
 }
 
-
-u32 create_move(u8 promotion_type, u8 castle_dir, u8 move_type, u8 color, u8 c_piece, u8 piece, u8 from, u8 to) {
-	
-	return (0ull | (u32) promotion_type << 23 | (u32) castle_dir << 21 | (u32) move_type << 19 |
-	 (u32) color << 16 | (u32) c_piece << 15 | (u32) piece << 12 | (u32) from << 6 | (u32) to);
-}

@@ -191,32 +191,274 @@ u64 gen_pawn_pushes(u32 *move_list, u8 pos) {
 }
 
 
-
 /* attacks */
 
 u64 gen_king_attacks(u32 *move_list, u8 pos) {
+	u64 king_bb = piece_bb[COLOR ^ 1][KING];
+
+	while(king_bb) {
+		const u8 from = bit_scan_forward(king_bb);
+		king_bb &= king_bb - 1;
+
+		u64 moves = get_king_attacks(from) & (~piece_bb[COLOR ^ 1][PIECES]);
+		u64 attacks = moves & piece_bb[COLOR][PIECES];
+
+		while(attacks) {
+			const u8 to = bit_scan_forward(attacks);
+			attacks &= attacks - 1;
+
+			if(to & piece_bb[COLOR][QUEEN]) {
+				move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, QUEEN, KING, from, to); 
+			} else if(piece_bb[COLOR][BISHOPS]) {
+				u64 bishops_bb = piece_bb[COLOR][BISHOPS];
+				while(bishops_bb) {
+					const u8 sq = bit_scan_forward(bishops_bb);
+					bishops_bb &= bishops_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, BISHOPS, KING, from, to);
+				}
+			} else if(piece_bb[COLOR][KNIGHTS]) {
+				u64 knights_bb = piece_bb[COLOR][KNIGHTS];
+				while(knights_bb) {
+					const u8 sq = bit_scan_forward(knights_bb);
+					knights_bb &= knights_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, KNIGHTS, KING, from, to);
+				}
+			} else if(piece_bb[COLOR][ROOKS]) {
+				u64 rooks_bb = piece_bb[COLOR][ROOKS];
+				while(rooks_bb) {
+					const u8 sq = bit_scan_forward(rooks_bb);
+					rooks_bb &= rooks_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, ROOKS, KING, from, to);
+				}
+			} else if(piece_bb[COLOR][PAWNS]) {
+				u64 pawns_bb = piece_bb[COLOR][PAWNS];
+				while(pawns_bb) {
+					const u8 sq = bit_scan_forward(pawns_bb);
+					pawns_bb &= pawns_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, PAWNS, KING, from, to);
+				}
+			}
+
+		}
+	}
+
 	return pos;
 }
 
 u64 gen_queen_attacks(u32 *move_list, u8 pos) {
+	u64 queen_bb = piece_bb[COLOR ^ 1][QUEEN];
+
+	while(queen_bb) {
+		const u8 from = bit_scan_forward(queen_bb);
+		queen_bb &= queen_bb - 1;
+		
+		u64 moves = Qmagic(from, occupied) & (~piece_bb[COLOR ^ 1][PIECES]); 
+		u64 attacks = moves & piece_bb[COLOR][PIECES];
+
+		while(attacks) {
+			const u8 to = bit_scan_forward(attacks);
+			attacks &= attacks - 1;
+
+			if(to & piece_bb[COLOR][QUEEN]) {
+				move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, QUEEN, QUEEN, from, to); 
+			} else if(piece_bb[COLOR][BISHOPS]) {
+				u64 bishops_bb = piece_bb[COLOR][BISHOPS];
+				while(bishops_bb) {
+					const u8 sq = bit_scan_forward(bishops_bb);
+					bishops_bb &= bishops_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, BISHOPS, QUEEN, from, to);
+				}
+			} else if(piece_bb[COLOR][KNIGHTS]) {
+				u64 knights_bb = piece_bb[COLOR][KNIGHTS];
+				while(knights_bb) {
+					const u8 sq = bit_scan_forward(knights_bb);
+					knights_bb &= knights_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, KNIGHTS, QUEEN, from, to);
+				}
+			} else if(piece_bb[COLOR][ROOKS]) {
+				u64 rooks_bb = piece_bb[COLOR][ROOKS];
+				while(rooks_bb) {
+					const u8 sq = bit_scan_forward(rooks_bb);
+					rooks_bb &= rooks_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, ROOKS, QUEEN, from, to);
+				}
+			} else if(piece_bb[COLOR][PAWNS]) {
+				u64 pawns_bb = piece_bb[COLOR][PAWNS];
+				while(pawns_bb) {
+					const u8 sq = bit_scan_forward(pawns_bb);
+					pawns_bb &= pawns_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, PAWNS, QUEEN, from, to);
+				}
+			}
+		}
+	}
+
 	return pos;
 }
 
 u64 gen_bishop_attacks(u32 *move_list, u8 pos) {
+	u64 bishop_bb = piece_bb[COLOR ^ 1][BISHOPS];
+
+	while(bishop_bb) {
+		const u8 from = bit_scan_forward(bishop_bb);
+		bishop_bb &= bishop_bb - 1;
+		
+		u64 moves = Bmagic(from, occupied) & (~piece_bb[COLOR ^ 1][PIECES]); 
+		u64 attacks = moves & piece_bb[COLOR][PIECES];
+
+		while(attacks) {
+			const u8 to = bit_scan_forward(attacks);
+			attacks &= attacks - 1;
+
+			if(to & piece_bb[COLOR][QUEEN]) {
+				move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, QUEEN, BISHOPS, from, to); 
+			} else if(piece_bb[COLOR][BISHOPS]) {
+				u64 bishops_bb = piece_bb[COLOR][BISHOPS];
+				while(bishops_bb) {
+					const u8 sq = bit_scan_forward(bishops_bb);
+					bishops_bb &= bishops_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, BISHOPS, BISHOPS, from, to);
+				}
+			} else if(piece_bb[COLOR][KNIGHTS]) {
+				u64 knights_bb = piece_bb[COLOR][KNIGHTS];
+				while(knights_bb) {
+					const u8 sq = bit_scan_forward(knights_bb);
+					knights_bb &= knights_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, KNIGHTS, BISHOPS, from, to);
+				}
+			} else if(piece_bb[COLOR][ROOKS]) {
+				u64 rooks_bb = piece_bb[COLOR][ROOKS];
+				while(rooks_bb) {
+					const u8 sq = bit_scan_forward(rooks_bb);
+					rooks_bb &= rooks_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, ROOKS, BISHOPS, from, to);
+				}
+			} else if(piece_bb[COLOR][PAWNS]) {
+				u64 pawns_bb = piece_bb[COLOR][PAWNS];
+				while(pawns_bb) {
+					const u8 sq = bit_scan_forward(pawns_bb);
+					pawns_bb &= pawns_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, PAWNS, BISHOPS, from, to);
+				}
+			}
+		}
+	}
+
 	return pos;
 }
 
 u64 gen_knight_attacks(u32 *move_list, u8 pos) {
+	
+	u64 knights_bb = piece_bb[COLOR ^ 1][KNIGHTS];
+
+	while(knights_bb) {
+		const u8 from = bit_scan_forward(knights_bb);
+		knights_bb &= knights_bb - 1;
+
+		u64 moves = get_knight_attacks(from) & (~piece_bb[COLOR ^ 1][PIECES]);
+		u64 attacks = moves & piece_bb[COLOR][PIECES];
+
+		while (attacks) {
+			const u8 to = bit_scan_forward(attacks);
+			attacks &= attacks - 1;
+
+		}
+	}
+
 	return pos;
 }
 
 u64 gen_rook_attacks(u32 *move_list, u8 pos) {
+	u64 rooks_bb = piece_bb[COLOR ^ 1][ROOKS];
+
+	while(rooks_bb) {
+		const u8 from = bit_scan_forward(rooks_bb);
+		rooks_bb &= rooks_bb - 1;
+		
+		u64 moves = Rmagic(from, occupied) & (~piece_bb[COLOR ^ 1][PIECES]); 
+		u64 attacks = moves & piece_bb[COLOR][PIECES];
+
+		while(attacks) {
+			const u8 to = bit_scan_forward(attacks);
+			attacks &= attacks - 1;
+
+			if(to & piece_bb[COLOR][QUEEN]) {
+				move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, QUEEN, ROOKS, from, to); 
+			} else if(piece_bb[COLOR][BISHOPS]) {
+				u64 bishops_bb = piece_bb[COLOR][BISHOPS];
+				while(bishops_bb) {
+					const u8 sq = bit_scan_forward(bishops_bb);
+					bishops_bb &= bishops_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, BISHOPS, ROOKS, from, to);
+				}
+			} else if(piece_bb[COLOR][KNIGHTS]) {
+				u64 knights_bb = piece_bb[COLOR][KNIGHTS];
+				while(knights_bb) {
+					const u8 sq = bit_scan_forward(knights_bb);
+					knights_bb &= knights_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, KNIGHTS, ROOKS, from, to);
+				}
+			} else if(piece_bb[COLOR][ROOKS]) {
+				u64 rooks_bb = piece_bb[COLOR][ROOKS];
+				while(rooks_bb) {
+					const u8 sq = bit_scan_forward(rooks_bb);
+					rooks_bb &= rooks_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, ROOKS, ROOKS, from, to);
+				}
+			} else if(piece_bb[COLOR][PAWNS]) {
+				u64 pawns_bb = piece_bb[COLOR][PAWNS];
+				while(pawns_bb) {
+					const u8 sq = bit_scan_forward(pawns_bb);
+					pawns_bb &= pawns_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, PAWNS, ROOKS, from, to);
+				}
+			}
+		}
+	}
+
 	return pos;
 }
 
 u64 gen_pawn_attacks(u32 *move_list, u8 pos) {
 	return pos;
 }
+
+
+
+
+
 
 /* special moves */
 
@@ -267,6 +509,11 @@ u64 gen_promotions(u32 *move_list, u8 pos) {
 	return pos;
 }
 
+u32 create_move(u8 promotion_type, u8 castle_dir, u8 move_type, u8 color, u8 c_piece, u8 piece, u8 from, u8 to) {
+	
+	return (0ull | (u32) promotion_type << 23 | (u32) castle_dir << 21 | (u32) move_type << 19 |
+	 (u32) color << 16 | (u32) c_piece << 15 | (u32) piece << 12 | (u32) from << 6 | (u32) to);
+}
 
 
 
