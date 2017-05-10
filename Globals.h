@@ -31,6 +31,20 @@ u64 piece_bb[2][7]; /* color * (piece_type + pieces of that color) = 2 * 7 = 14 
 
 u64 index_bb[INDEX_BB_SIZE];
 
+/********************************/
+
+#define MAX_PLY 1024
+u32 ply;
+
+struct hist {
+	u64 move;
+	u64 ep_sq;
+	u8 castle_flags;
+	u8 ep_flag;
+} hist[MAX_PLY];
+
+/********************************/
+
 /* index for pieces in pieceBB array */
 
 #define KING 0
@@ -45,17 +59,6 @@ u64 index_bb[INDEX_BB_SIZE];
 
 u64 occupied, empty;
 
-/*
-*	0 -> quiet moves
-*	1 -> captures
-*	2 -> pawn double moves
-*	3 -> en passant
-*	4 -> castling
-*	5 -> promotions
-*	6 -> king moves
-*/
-
-
 /* Extract data from a move structure */
 #define promotion_type(move)    (((00000000011000000000000000000000 & move) >> 23))
 #define castle_dir(move)		(((00000000000110000000000000000000 & move) >> 21))
@@ -63,8 +66,8 @@ u64 occupied, empty;
 #define color(move)             (((00000000000000001110000000000000 & move) >> 16))
 #define c_piece(move)           (((00000000000000111000000000000000 & move) >> 15))
 #define piece(move)	            (((00000000000000000111000000000000 & move) >> 12)) 	
-#define from(move)              (((00000000000000000000111111000000 & move) >> 6))
-#define to(move)                (( 00000000000000000000000000111111 & move))
+#define from_sq(move)              (((00000000000000000000111111000000 & move) >> 6))
+#define to_sq(move)                (( 00000000000000000000000000111111 & move))
 
 #define RANK_2 0x000000000000FF00U
 #define RANK_7 0x00FF000000000000U

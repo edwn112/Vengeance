@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
 	init_magic_moves(); 
 
 	u32 move_list[MAX_MOVES];
+	ply = 0;
 
 	ftime(&start);
 	
