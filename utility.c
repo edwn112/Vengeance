@@ -1,6 +1,9 @@
-#include "utility.h"
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "utility.h"
+#include "nonslidingmoves.h"
+#include "magicmoves.h"
 
 void print_bb(u64 board) {
 
@@ -46,4 +49,58 @@ int bit_scan_forward(u64 board) {
 	const u64 debruijn64 = 285870213051386505U;
 	
 	return index64[((board ^ (board - 1)) * debruijn64) >> 58];
+}
+
+/* function to check if a square is attacked */
+
+bool is_sq_attacked(u8 sq, const u8 color) {
+
+	u64 attacks;	
+	
+	/* check if a king is attacking a sq */
+
+	attacks = get_king_attacks(sq);
+
+	if(attacks & piece_bb[color ^ 1][KING])
+		return true;
+
+
+	/* check if a queen is attacking a sq */
+
+	attacks = Qmagic(sq, occupied);
+
+	if(attacks & piece_bb[color ^ 1][QUEEN])
+		return true;
+
+	/* check if a bishop is attacking a square */
+
+	attacks = Bmagic(sq, occupied);
+
+	if(attacks & piece_bb[color ^ 1][BISHOPS])
+		return true;
+
+	/* check if a knight is attacking a square */
+
+	attacks = get_knight_attacks(sq);
+
+	if(attacks & piece_bb[color ^ 1][KNIGHTS])
+		return true;
+
+	/* check if a rook is attacking a square */
+
+	attacks = Rmagic(sq, occupied);
+
+	if(attacks & piece_bb[color ^ 1][ROOKS])
+		return true;
+
+	/* check if a pawn is attacking a square */
+
+	u64 sq_bb = index_bb[sq];
+
+	attacks = (sq_bb << 7) >> (14 * color) | (sq_bb << 9) >> (16 * color);
+
+	if(attacks & piece_bb[color ^ 1][PAWNS])
+		return true;
+
+	return false;
 }
