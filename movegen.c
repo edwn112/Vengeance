@@ -548,6 +548,50 @@ u64 gen_double_pushes(u32 *move_list, u8 pos) {
 
 u64 gen_castling_moves(u32 *move_list, u8 pos) {
 
+	if(COLOR ^ 1) {
+		
+		if(castling_rights[1]) {
+	
+			if(hist[ply].castle_flags & 0x0100) {
+				u64 bq_sqs = empty & BQ_SIDE_SQS;
+
+
+				if(bq_sqs == BQ_SIDE_SQS) {
+					u32 move = create_move(0, 2, 4, 1, ROOKS, KING, 60, 58);
+					move_list[pos++] = move;
+				}
+			
+			} else if (hist[ply].castle_flags & 0x1000) {
+		
+				u64 bk_sqs = empty & BK_SIDE_SQS;
+
+				if(bk_sqs == BK_SIDE_SQS) {
+					u32 move = create_move(0, 3, 4, 1, ROOKS, KING, 60, 62);
+					move_list[pos++] = move;
+				}
+			}
+		}
+	} else {
+
+		if(castling_rights[0]) {
+			if(hist[ply].castle_flags & 0x0001) {
+				u64 wq_sqs = empty & WQ_SIDE_SQS;
+
+				if(wq_sqs == WQ_SIDE_SQS) {
+					u32 move = create_move(0, 0, 4, 0, ROOKS, KING, 4, 2); 
+					move_list[pos++] = move;
+				}
+			} else if(hist[ply].castle_flags & 0x0010) {
+				u64 wk_sqs = empty & WK_SIDE_SQS;
+
+				if(wk_sqs == WK_SIDE_SQS) {
+					u32 move = create_move(0, 1, 4, 0, ROOKS, KING, 4, 6);
+					move_list[pos++] = move;
+				}
+			}	
+		}
+	}
+
 	return pos;
 }
 
@@ -666,10 +710,10 @@ u64 gen_promotions(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(to_push);
 			to_push &= to_push - 1;
 			
-			u64 queen_prom = create_move(0, 0, 5, COLOR ^ 1, 7, PAWNS, from, to);
-			u64 rook_prom = create_move(1, 0, 5, COLOR ^ 1, 7, PAWNS, from, to);
-			u64 knight_prom = create_move(2, 0, 5, COLOR ^ 1, 7, PAWNS, from, to);
-			u64 bishop_prom = create_move(3, 0, 5, COLOR ^ 1, 7, PAWNS, from, to);		
+			u64 queen_prom = create_move(0, 0, 5, COLOR ^ 1, DUMMY, PAWNS, from, to);
+			u64 rook_prom = create_move(1, 0, 5, COLOR ^ 1, DUMMY, PAWNS, from, to);
+			u64 knight_prom = create_move(2, 0, 5, COLOR ^ 1, DUMMY, PAWNS, from, to);
+			u64 bishop_prom = create_move(3, 0, 5, COLOR ^ 1, DUMMY, PAWNS, from, to);		
 		
 			move_list[pos++] = queen_prom;
 			move_list[pos++] = rook_prom;

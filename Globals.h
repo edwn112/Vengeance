@@ -44,6 +44,9 @@ struct hist {
 } hist[MAX_PLY];
 
 /********************************/
+u8 castling_rights[2];
+
+/********************************/
 
 /* index for pieces in pieceBB array */
 
@@ -54,24 +57,28 @@ struct hist {
 #define ROOKS 4
 #define PAWNS 5
 #define PIECES 6
+#define DUMMY 7
 
 /* occupied and empty squares bb */
 
 u64 occupied, empty;
 
 /* Extract data from a move structure */
-#define promotion_type(move)    (((00000000011000000000000000000000 & move) >> 23))
-#define castle_dir(move)		(((00000000000110000000000000000000 & move) >> 21))
+#define prom_type(move)   		((( 000000011000000000000000000000 & move) >> 23))
+#define castle_dir(move)		((( 00000000000110000000000000000000 & move) >> 21))
 #define move_type(move)         (((00000000000001110000000000000000 & move) >> 19))
-#define color(move)             (((00000000000000001110000000000000 & move) >> 16))
-#define c_piece(move)           (((00000000000000111000000000000000 & move) >> 15))
-#define piece(move)	            (((00000000000000000111000000000000 & move) >> 12)) 	
+#define color_type(move)             (((00000000000000001110000000000000 & move) >> 16))
+#define c_piece_type(move)           (((00000000000000111000000000000000 & move) >> 15))
+#define piece_type(move)	            (((00000000000000000111000000000000 & move) >> 12)) 	
 #define from_sq(move)              (((00000000000000000000111111000000 & move) >> 6))
 #define to_sq(move)                (( 00000000000000000000000000111111 & move))
 
 #define RANK_2 0x000000000000FF00U
 #define RANK_7 0x00FF000000000000U
 
-
+#define WQ_SIDE_SQS 0x000000000000000EU
+#define WK_SIDE_SQS 0x0000000000000060U
+#define BQ_SIDE_SQS 0x0E00000000000000U
+#define BK_SIDE_SQS 0x6000000000000000U
 
 #endif /* GLOBALS_H_ */
