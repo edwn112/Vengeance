@@ -10,7 +10,7 @@
 
 /* encode the move in a 32 bit integer */
 
-inline u32 create_move(u8 promotion_type, u8 castle_dir, u8 move_type, u8 color, u8 c_piece, u8 piece, u8 from, u8 to);
+u32 create_move(u8 promotion_type, u8 castle_dir, u8 move_type, u8 color, u8 c_piece, u8 piece, u8 from, u8 to);
 
 u64 gen_moves(u32 *move_list);
 

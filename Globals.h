@@ -42,7 +42,7 @@ struct hist {
 	u64 ep_sq;
 	u8 castle_flags;
 	u8 ep_flag;
-} hist[MAX_PLY];
+} hist[MAX_PLY], hist_add;
 
 /********************************/
 u8 castling_rights[2];
@@ -65,13 +65,13 @@ u8 castling_rights[2];
 u64 occupied, empty;
 
 /* Extract data from a move structure */
-#define prom_type(move)   		move & 0x3000000
-#define castle_dir(move)		move & 0xC00000
-#define move_type(move)         move & 0x380000
-#define color_type(move)        move & 0x40000
-#define c_piece_type(move)      move & 0x38000
-#define piece_type(move)	    move & 0x7000  	
-#define from_sq(move)          	move & 0xFC0
+#define prom_type(move)   		move & 0x3000000 >> 24
+#define castle_dir(move)		move & 0xC00000 >> 22
+#define move_type(move)         move & 0x380000 >> 19
+#define color_type(move)        move & 0x40000 >> 18
+#define c_piece_type(move)      move & 0x38000 >> 15
+#define piece_type(move)	    move & 0x7000 >> 12  	
+#define from_sq(move)          	move & 0xFC0 >> 6
 #define to_sq(move)				move & 0x3F
 
 #define RANK_2 0x000000000000FF00U

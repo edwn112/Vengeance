@@ -16,20 +16,20 @@ u64 gen_moves(u32 *move_list) {
 	u8 pos = 0;
 
 	pos = gen_pushes(move_list, pos);
-	pos = gen_attacks(move_list, pos);
-	pos = gen_special_moves(move_list, pos);
+	//pos = gen_attacks(move_list, pos);
+	//pos = gen_special_moves(move_list, pos);
 
 	return pos;
 }
 
  u64 gen_pushes(u32 *move_list, u8 pos) {
 
-	pos = gen_king_pushes(move_list, pos);
-	pos = gen_queen_pushes(move_list, pos);
-	pos = gen_bishop_pushes(move_list, pos);
+	//pos = gen_king_pushes(move_list, pos);
+	//pos = gen_queen_pushes(move_list, pos);
+	//pos = gen_bishop_pushes(move_list, pos);
 	pos = gen_knight_pushes(move_list, pos);
-	pos = gen_rook_pushes(move_list, pos);
-	pos = gen_pawn_pushes(move_list, pos); /*only single push, double push is considered a special move */
+	//pos = gen_rook_pushes(move_list, pos);
+	//pos = gen_pawn_pushes(move_list, pos); /*only single push, double push is considered a special move */
 
 	return pos;
 }
@@ -129,13 +129,13 @@ u64 gen_knight_pushes(u32 *move_list, u8 pos) {
 		const u8 from = bit_scan_forward(knights_bb);
 		knights_bb &= knights_bb - 1;
 
-		u64 pushes = get_knight_attacks(from) & (~occupied);
-
+		u64 pushes = get_knight_attacks(from) & empty;
+		
 		while (pushes) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, KNIGHTS, from, to);
+			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, DUMMY, KNIGHTS, from, to);
 		}
 	}
 
@@ -194,9 +194,8 @@ u64 gen_king_attacks(u32 *move_list, u8 pos) {
 		const u8 from = bit_scan_forward(king_bb);
 		king_bb &= king_bb - 1;
 
-		u64 moves = get_king_attacks(from) & (~piece_bb[COLOR ^ 1][PIECES]);
-		u64 attacks = moves & piece_bb[COLOR][PIECES];
-
+		u64 attacks = get_king_attacks(from) & piece_bb[COLOR ^ 1][PIECES];
+		
 		while(attacks) {
 			const u8 to = bit_scan_forward(attacks);
 			attacks &= attacks - 1;
@@ -254,9 +253,8 @@ u64 gen_queen_attacks(u32 *move_list, u8 pos) {
 		const u8 from = bit_scan_forward(queen_bb);
 		queen_bb &= queen_bb - 1;
 		
-		u64 moves = Qmagic(from, occupied) & (~piece_bb[COLOR ^ 1][PIECES]); 
-		u64 attacks = moves & piece_bb[COLOR][PIECES];
-
+		u64 attacks = Qmagic(from, occupied) & piece_bb[COLOR ^ 1][PIECES]; 
+		
 		while(attacks) {
 			const u8 to = bit_scan_forward(attacks);
 			attacks &= attacks - 1;
@@ -313,9 +311,8 @@ u64 gen_bishop_attacks(u32 *move_list, u8 pos) {
 		const u8 from = bit_scan_forward(bishop_bb);
 		bishop_bb &= bishop_bb - 1;
 		
-		u64 moves = Bmagic(from, occupied) & (~piece_bb[COLOR ^ 1][PIECES]); 
-		u64 attacks = moves & piece_bb[COLOR][PIECES];
-
+		u64 attacks = Bmagic(from, occupied) & (piece_bb[COLOR ^ 1][PIECES]); 
+	
 		while(attacks) {
 			const u8 to = bit_scan_forward(attacks);
 			attacks &= attacks - 1;
@@ -373,9 +370,8 @@ u64 gen_knight_attacks(u32 *move_list, u8 pos) {
 		const u8 from = bit_scan_forward(knights_bb);
 		knights_bb &= knights_bb - 1;
 
-		u64 moves = get_knight_attacks(from) & (~piece_bb[COLOR ^ 1][PIECES]);
-		u64 attacks = moves & piece_bb[COLOR][PIECES];
-
+		u64 attacks = get_knight_attacks(from) & (piece_bb[COLOR ^ 1][PIECES]);
+		
 		while (attacks) {
 			const u8 to = bit_scan_forward(attacks);
 			attacks &= attacks - 1;
@@ -393,8 +389,7 @@ u64 gen_rook_attacks(u32 *move_list, u8 pos) {
 		const u8 from = bit_scan_forward(rooks_bb);
 		rooks_bb &= rooks_bb - 1;
 		
-		u64 moves = Rmagic(from, occupied) & (~piece_bb[COLOR ^ 1][PIECES]); 
-		u64 attacks = moves & piece_bb[COLOR][PIECES];
+		u64 attacks = Rmagic(from, occupied) & (piece_bb[COLOR ^ 1][PIECES]); 
 
 		while(attacks) {
 			const u8 to = bit_scan_forward(attacks);

@@ -9,7 +9,7 @@ bool make_move(u32 move) {
 	from_bb = index_bb[from_sq(move)];
 	to_bb = index_bb[to_sq(move)];
 
-	from_to_bb = from_bb ^ to_bb;
+	printf("%u - %u - %u\n", from_sq(move), to_sq(move), move_type(move));
 
 	piece = piece_type(move);
 	c_piece = c_piece_type(move);
@@ -17,10 +17,12 @@ bool make_move(u32 move) {
 
 	ply = ply + 1;
 
-	hist[ply].move = move;
-	hist[ply].ep_sq = hist[ply - 1].ep_sq;
-	hist[ply].ep_flag = hist[ply - 1].ep_flag;
-	hist[ply].castle_flags = hist[ply - 1].castle_flags;
+	hist_add.move = move;
+	hist_add.ep_sq = hist[ply - 1].ep_sq;
+	hist_add.ep_flag = hist[ply - 1].ep_flag;
+	hist_add.castle_flags = hist[ply - 1].castle_flags;  
+
+	hist[ply] = hist_add;
 
 	switch(move_type(move)) {
 	
@@ -302,14 +304,14 @@ bool make_move(u32 move) {
 	if(is_sq_attacked((bit_scan_forward(piece_bb[color][KING])), color))
 		return false;
 
+	//print_bb(occupied);
+
 	COLOR ^= 1;
 
 	return true; 
 }
 
 void unmake_move() {
-
-	ply = ply - 1;
 
 	u32 move = hist[ply].move;
 
@@ -507,5 +509,5 @@ void unmake_move() {
 				break;
 	}
 
-	COLOR ^= 1;
+	ply = ply - 1;
 }

@@ -27,18 +27,24 @@ int main(int argc, char **argv) {
 
 	ply = 0;
 
-	hist[ply].move = 0;
-	hist[ply].ep_flag = 0;
-	hist[ply].castle_flags = (u8)0x1111;  
+	hist_add.move = 0;
+	hist_add.ep_flag = 0;
+	hist_add.castle_flags = (u8)0x1111;  
 
+	hist[ply] = hist_add;
+	
 	u8 i, nodes;
 
 	COLOR = 1;
 
 //	for(i = 0; i < MAX_DEPTH; i++) {
+
+		u8 depth;
+		scanf("%u", &depth);
+
 		ftime(&start);
 
-		nodes = perft(3);
+		nodes = perft(depth);
 
 		ftime(&end);
 
