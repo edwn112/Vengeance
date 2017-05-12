@@ -12,12 +12,6 @@
 #include "utility.h"
 
 u64 gen_moves(u32 *move_list) {
-
-	printf("For side ");
-	if(COLOR ^ 1)
-		printf(" - BLACK\n");
-	else
-		printf(" - WHITE\n");
 	
 	u8 pos = 0;
 
@@ -79,7 +73,7 @@ u64 gen_king_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 6, COLOR ^ 1, 7, KING, from, to);
+			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, KING, from, to);
 		}
 	}
 
@@ -748,8 +742,8 @@ u64 gen_promotions(u32 *move_list, u8 pos) {
 
 u32 create_move(u8 promotion_type, u8 castle_dir, u8 move_type, u8 color, u8 c_piece, u8 piece, u8 from, u8 to) {
 	
-	return (0ull | (u32) promotion_type << 23 | (u32) castle_dir << 21 | (u32) move_type << 19 |
-	 (u32) color << 16 | (u32) c_piece << 15 | (u32) piece << 12 | (u32) from << 6 | (u32) to);
+	return (0ull | (u32) promotion_type << 24 | (u32) castle_dir << 22 | (u32) move_type << 19 |
+	 (u32) color << 18 | (u32) c_piece << 15 | (u32) piece << 12 | (u32) from << 6 | (u32) to);
 }
 
 

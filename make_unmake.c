@@ -1,7 +1,9 @@
+#include <stdbool.h>
 #include "make_unmake.h"
 #include "utility.h"
 
-void make_move(u32 move) {
+
+bool make_move(u32 move) {
 	u64 from_bb, to_bb, from_to_bb, piece, c_piece, color;
 
 	from_bb = index_bb[from_sq(move)];
@@ -127,8 +129,8 @@ void make_move(u32 move) {
 					piece_bb[color ^ 1][c_piece] ^= (to_bb << 8) >> 16 * (color ^ 1);
 					piece_bb[color ^ 1][PIECES] ^= (to_bb << 8) >> 16 * (color ^ 1);
 
-					occupied ^= (from_to_bb | (to_bb << 8) >> 16 * (color ^ 1));
-					empty ^= (from_to_bb | (to_bb << 8) >> 16 * (color ^ 1));				
+					occupied ^= (from_to_bb | (to_bb >> 8) << 16 * (color ^ 1));
+					empty ^= (from_to_bb | (to_bb >> 8) << 16 * (color ^ 1));				
 
 					break;
 		
@@ -218,107 +220,292 @@ void make_move(u32 move) {
 					break;
 	
 		case 5 : 
-					switch(color) {
-						case 0: 
-								switch(prom_type(move)) {
-									case 0: 
-											piece_bb[color][PAWNS] ^= from_bb;
-											piece_bb[color][QUEEN] ^= to_bb;
-											piece_bb[color][PIECES] ^= from_to_bb;
+				switch(prom_type(move)) {
+					case 0: 
+							piece_bb[color][PAWNS] ^= from_bb;
+							piece_bb[color][QUEEN] ^= to_bb;
+							piece_bb[color][PIECES] ^= from_to_bb;
 
-											if(c_piece != DUMMY) {
-												piece_bb[color ^ 1][c_piece] ^= to_bb;
-												piece_bb[color ^ 1][PIECES] ^= to_bb; 
+							if(c_piece != DUMMY) {
+								piece_bb[color ^ 1][c_piece] ^= to_bb;
+								piece_bb[color ^ 1][PIECES] ^= to_bb; 
 
-												occupied ^= from_bb;
-												empty ^= from_bb;
+								occupied ^= from_bb;
+								empty ^= from_bb;
 
-											} else {
-												occupied ^= from_to_bb;
-												empty ^= from_to_bb;
-											}
+							} else {
+								occupied ^= from_to_bb;
+								empty ^= from_to_bb;
+							}
 
-											break;
-									case 1: 
-											piece_bb[color][PAWNS] ^= from_bb;
-											piece_bb[color][ROOKS] ^= to_bb;
-											piece_bb[color][PIECES] ^= from_to_bb;
+							break;
+					case 1: 
+							piece_bb[color][PAWNS] ^= from_bb;
+							piece_bb[color][ROOKS] ^= to_bb;
+							piece_bb[color][PIECES] ^= from_to_bb;
 
-											if(c_piece != DUMMY) {
-												piece_bb[color ^ 1][c_piece] ^= to_bb;
-												piece_bb[color ^ 1][PIECES] ^= to_bb; 
+							if(c_piece != DUMMY) {
+								piece_bb[color ^ 1][c_piece] ^= to_bb;
+								piece_bb[color ^ 1][PIECES] ^= to_bb; 
 
-												occupied ^= from_bb;
-												empty ^= from_bb;
+								occupied ^= from_bb;
+								empty ^= from_bb;
 
-											} else {
-												occupied ^= from_to_bb;
-												empty ^= from_to_bb;
-											}
+							} else {
+								occupied ^= from_to_bb;
+								empty ^= from_to_bb;
+							}
 
-											break;
-									case 2: 
-											piece_bb[color][PAWNS] ^= from_bb;
-											piece_bb[color][KNIGHTS] ^= to_bb;
-											piece_bb[color][PIECES] ^= from_to_bb;
+							break;
+					case 2: 
+							piece_bb[color][PAWNS] ^= from_bb;
+							piece_bb[color][KNIGHTS] ^= to_bb;
+							piece_bb[color][PIECES] ^= from_to_bb;
 
-											if(c_piece != DUMMY) {
-												piece_bb[color ^ 1][c_piece] ^= to_bb;
-												piece_bb[color ^ 1][PIECES] ^= to_bb; 
+							if(c_piece != DUMMY) {
+								piece_bb[color ^ 1][c_piece] ^= to_bb;
+								piece_bb[color ^ 1][PIECES] ^= to_bb; 
 
-												occupied ^= from_bb;
-												empty ^= from_bb;
+								occupied ^= from_bb;
+								empty ^= from_bb;
 
-											} else {
-												occupied ^= from_to_bb;
-												empty ^= from_to_bb;
-											}
+							} else {
+								occupied ^= from_to_bb;
+								empty ^= from_to_bb;
+							}
 
-											break;
-									case 3:
-											piece_bb[color][PAWNS] ^= from_bb;
-											piece_bb[color][BISHOPS] ^= to_bb;
-											piece_bb[color][PIECES] ^= from_to_bb;
+							break;
+					case 3:
+							piece_bb[color][PAWNS] ^= from_bb;
+							piece_bb[color][BISHOPS] ^= to_bb;
+							piece_bb[color][PIECES] ^= from_to_bb;
 
-											if(c_piece != DUMMY) {
-												piece_bb[color ^ 1][c_piece] ^= to_bb;
-												piece_bb[color ^ 1][PIECES] ^= to_bb; 
+							if(c_piece != DUMMY) {
+								piece_bb[color ^ 1][c_piece] ^= to_bb;
+								piece_bb[color ^ 1][PIECES] ^= to_bb; 
 
-												occupied ^= from_bb;
-												empty ^= from_bb;
+								occupied ^= from_bb;
+								empty ^= from_bb;
 
-											} else {
-												occupied ^= from_to_bb;
-												empty ^= from_to_bb;
-											}
+							} else {
+								occupied ^= from_to_bb;
+								empty ^= from_to_bb;
+							}
 
-											break;
-								}
-
-								break;
-						case 1: 
-
-								break;
-					}
-
-					break;
+							break;
+				}
+				break;
 
 	}
 
+
+	if(is_sq_attacked((bit_scan_forward(piece_bb[color][KING])), color))
+		return false;
+
+	COLOR ^= 1;
+
+	return true; 
 }
 
 void unmake_move() {
 
+	ply = ply - 1;
+
 	u32 move = hist[ply].move;
 
+	u64 from_bb, to_bb, from_to_bb, piece, c_piece, color;
+
+	from_bb = index_bb[from_sq(move)];
+	to_bb = index_bb[to_sq(move)];
+
+	from_to_bb = from_bb ^ to_bb;
+
+	piece = piece_type(move);
+	c_piece = c_piece_type(move);
+	color = color_type(move);
+
 	switch(move_type(move)) {
-		case 0 : break;
-		case 1 : break;
-		case 2 : break;
-		case 3 : break;
-		case 4 : break;
-		case 5 : break;
+		case 0 :	
+					piece_bb[color][piece] ^= from_to_bb;
+					piece_bb[color][PIECES] ^= from_to_bb;
+					
+					occupied ^= from_to_bb;
+					empty	^= from_to_bb;
+
+					break;
+		case 1 :
+					piece_bb[color][piece] ^= from_to_bb;
+					piece_bb[color][PIECES] ^= from_to_bb;
+
+					piece_bb[color ^ 1][c_piece] ^= to_bb;
+					piece_bb[color ^ 1][PIECES] ^= to_bb;
+
+					occupied ^= from_bb;
+					empty ^= from_bb;
+
+					break;
+		case 2 : 
+					piece_bb[color][piece] ^= from_to_bb;
+					piece_bb[color][PIECES] ^= from_to_bb;
+					
+					occupied ^= from_to_bb;
+					empty	^= from_to_bb;
+
+					break;
+		case 3 : 
+					piece_bb[color][piece] ^= from_to_bb;
+					piece_bb[color][PIECES] ^= from_to_bb;
+
+					piece_bb[color ^ 1][c_piece] ^= (to_bb << 8) >> 16 * (color ^ 1);
+					piece_bb[color ^ 1][PIECES] ^= (to_bb << 8) >> 16 * (color ^ 1);
+
+					occupied ^= (from_to_bb | (to_bb >> 8) << 16 * (color ^ 1));
+					empty ^= (from_to_bb | (to_bb >> 8) << 16 * (color ^ 1));				
+
+					break;
+		case 4 :	
+					switch(castle_dir(move)) {
+						case 0: 
+								castling_rights[0] = 1;
+
+								piece_bb[color][piece] ^= from_to_bb;
+								
+								piece_bb[color][c_piece] ^= (0x0000 ^ 0x0008);
+
+								piece_bb[color][PIECES] &= 0x000000000000000CU;
+								piece_bb[color][PIECES] |= ~0x0000000000000011U;
+
+								occupied = piece_bb[color][PIECES] | piece_bb[color ^ 1][PIECES];
+								empty = ~occupied;
+							
+								break;
+
+						case 1:
+								castling_rights[0] = 1;
+
+								piece_bb[color][piece] ^= from_to_bb;
+								
+								piece_bb[color][c_piece] ^= (0x0080U ^ 0x0020U);
+
+								piece_bb[color][PIECES] &=  0x0000000000000060U;
+								piece_bb[color][PIECES] |= ~0x0000000000000090U;
+
+								occupied = piece_bb[color][PIECES] | piece_bb[color ^ 1][PIECES];
+								empty = ~occupied;
+								
+							break;
+
+						case 2:
+								castling_rights[1] = 1;
+
+								piece_bb[color][piece] ^= from_to_bb;
+								
+								piece_bb[color][c_piece] ^= (0x0100000000000000U ^ 0x0800000000000000U);
+
+								piece_bb[color][PIECES] &=  0x0C00000000000000U;
+								piece_bb[color][PIECES] |= ~0x1100000000000000U;
+
+								occupied = piece_bb[color][PIECES] | piece_bb[color ^ 1][PIECES];
+								empty = ~occupied;
+								
+						
+								break;
+
+						case 3: 
+								castling_rights[1] = 1;
+
+								piece_bb[color][piece] ^= from_to_bb;
+								
+								piece_bb[color][c_piece] ^= (0x8000000000000000U ^ 0x2000000000000000U);
+
+								piece_bb[color][PIECES] &=  0x6000000000000000U;
+								piece_bb[color][PIECES] |= ~0x9000000000000000U;
+
+								occupied = piece_bb[color][PIECES] | piece_bb[color ^ 1][PIECES];
+								empty = ~occupied;
+				
+								break;
+					}
+
+					break;
+		case 5 : 
+					switch(prom_type(move)) {
+					case 0: 
+							piece_bb[color][PAWNS] ^= from_bb;
+							piece_bb[color][QUEEN] ^= to_bb;
+							piece_bb[color][PIECES] ^= from_to_bb;
+
+							if(c_piece != DUMMY) {
+								piece_bb[color ^ 1][c_piece] ^= to_bb;
+								piece_bb[color ^ 1][PIECES] ^= to_bb; 
+
+								occupied ^= from_bb;
+								empty ^= from_bb;
+
+							} else {
+								occupied ^= from_to_bb;
+								empty ^= from_to_bb;
+							}
+
+							break;
+					case 1: 
+							piece_bb[color][PAWNS] ^= from_bb;
+							piece_bb[color][ROOKS] ^= to_bb;
+							piece_bb[color][PIECES] ^= from_to_bb;
+
+							if(c_piece != DUMMY) {
+								piece_bb[color ^ 1][c_piece] ^= to_bb;
+								piece_bb[color ^ 1][PIECES] ^= to_bb; 
+
+								occupied ^= from_bb;
+								empty ^= from_bb;
+
+							} else {
+								occupied ^= from_to_bb;
+								empty ^= from_to_bb;
+							}
+
+							break;
+					case 2: 
+							piece_bb[color][PAWNS] ^= from_bb;
+							piece_bb[color][KNIGHTS] ^= to_bb;
+							piece_bb[color][PIECES] ^= from_to_bb;
+
+							if(c_piece != DUMMY) {
+								piece_bb[color ^ 1][c_piece] ^= to_bb;
+								piece_bb[color ^ 1][PIECES] ^= to_bb; 
+
+								occupied ^= from_bb;
+								empty ^= from_bb;
+
+							} else {
+								occupied ^= from_to_bb;
+								empty ^= from_to_bb;
+							}
+
+							break;
+					case 3:
+							piece_bb[color][PAWNS] ^= from_bb;
+							piece_bb[color][BISHOPS] ^= to_bb;
+							piece_bb[color][PIECES] ^= from_to_bb;
+
+							if(c_piece != DUMMY) {
+								piece_bb[color ^ 1][c_piece] ^= to_bb;
+								piece_bb[color ^ 1][PIECES] ^= to_bb; 
+
+								occupied ^= from_bb;
+								empty ^= from_bb;
+
+							} else {
+								occupied ^= from_to_bb;
+								empty ^= from_to_bb;
+							}
+
+							break;
+				}
+				
+				break;
 	}
 
-	ply = ply - 1;
+	COLOR ^= 1;
 }

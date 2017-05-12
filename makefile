@@ -1,7 +1,7 @@
 all:	Vengeance
 
-Vengeance:	main.o  magicmoves.o nonslidingmoves.o movegen.o make_unmake.o utility.o
-	clang main.o magicmoves.o nonslidingmoves.o movegen.o make_unmake.o utility.o -O3 -o Vengeance
+Vengeance:	main.o  magicmoves.o nonslidingmoves.o movegen.o make_unmake.o utility.o perft.o
+	clang main.o magicmoves.o nonslidingmoves.o movegen.o make_unmake.o utility.o perft.o -O3 -o Vengeance
 
 main.o:	main.c
 	clang -c main.c
@@ -20,6 +20,9 @@ utility.o:	utility.c
 
 make_unmake.o:	make_unmake.c
 	clang -c make_unmake.c
+
+perft.o:	perft.c
+	clang -c perft.c
 
 clean:
 	rm *o Vengeance

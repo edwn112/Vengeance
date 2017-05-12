@@ -19,8 +19,9 @@ typedef unsigned long long int u64;
 #define C64(constantU64) constantU64
 
 #define MAX_MOVES 256
+#define MAX_DEPTH 8
 
-#define COLOR 1 /* 0 for white, COLOR ^ 1 = 1 for black */ 
+u8 COLOR;
 
 /* pieceBB is an array containing bitboards for all pieces */
 
@@ -64,14 +65,14 @@ u8 castling_rights[2];
 u64 occupied, empty;
 
 /* Extract data from a move structure */
-#define prom_type(move)   		((( 000000011000000000000000000000 & move) >> 23))
-#define castle_dir(move)		((( 00000000000110000000000000000000 & move) >> 21))
-#define move_type(move)         (((00000000000001110000000000000000 & move) >> 19))
-#define color_type(move)             (((00000000000000001110000000000000 & move) >> 16))
-#define c_piece_type(move)           (((00000000000000111000000000000000 & move) >> 15))
-#define piece_type(move)	            (((00000000000000000111000000000000 & move) >> 12)) 	
-#define from_sq(move)              (((00000000000000000000111111000000 & move) >> 6))
-#define to_sq(move)                (( 00000000000000000000000000111111 & move))
+#define prom_type(move)   		move & 0x3000000
+#define castle_dir(move)		move & 0xC00000
+#define move_type(move)         move & 0x380000
+#define color_type(move)        move & 0x40000
+#define c_piece_type(move)      move & 0x38000
+#define piece_type(move)	    move & 0x7000  	
+#define from_sq(move)          	move & 0xFC0
+#define to_sq(move)				move & 0x3F
 
 #define RANK_2 0x000000000000FF00U
 #define RANK_7 0x00FF000000000000U
