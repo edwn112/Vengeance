@@ -17,19 +17,19 @@ u64 gen_moves(u32 *move_list) {
 
 	pos = gen_pushes(move_list, pos);
 	//pos = gen_attacks(move_list, pos);
-	//pos = gen_special_moves(move_list, pos);
+	pos = gen_special_moves(move_list, pos);
 
 	return pos;
 }
 
  u64 gen_pushes(u32 *move_list, u8 pos) {
 
-	//pos = gen_king_pushes(move_list, pos);
-	//pos = gen_queen_pushes(move_list, pos);
-	//pos = gen_bishop_pushes(move_list, pos);
+	pos = gen_king_pushes(move_list, pos);
+	pos = gen_queen_pushes(move_list, pos);
+	pos = gen_bishop_pushes(move_list, pos);
 	pos = gen_knight_pushes(move_list, pos);
-	//pos = gen_rook_pushes(move_list, pos);
-	//pos = gen_pawn_pushes(move_list, pos); /*only single push, double push is considered a special move */
+	pos = gen_rook_pushes(move_list, pos);
+	pos = gen_pawn_pushes(move_list, pos); /*only single push, double push is considered a special move */
 
 	return pos;
 }
@@ -73,7 +73,7 @@ u64 gen_king_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, KING, from, to);
+			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, DUMMY, KING, from, to);
 		}
 	}
 
@@ -94,7 +94,7 @@ u64 gen_queen_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, QUEEN, from, to); /* 7 is a dummy value indicating no captured piece */
+			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, DUMMY, QUEEN, from, to);
 		}
 	}
 
@@ -114,7 +114,7 @@ u64 gen_bishop_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 	
-			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, BISHOPS, from, to); /* 7 is a dummy value indicating no captured piece */
+			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, BISHOPS, from, to);
 		}
 	}
 
@@ -155,7 +155,7 @@ u64 gen_rook_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, 0, 7, ROOKS, from, to); /* 7 is a dummy value indicating no captured piece */
+			move_list[pos++] = create_move(0, 0, 0, 0, 7, ROOKS, from, to); 
 		}
 	}
 
@@ -173,11 +173,11 @@ u64 gen_pawn_pushes(u32 *move_list, u8 pos) {
 		u8 from;
 
 		if(COLOR)
-			from = to << 8;
+			from = to - 8;
 		else
-			from = to >> 8;
+			from = to + 8;
 
-		move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, 5, from, to);
+		move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, DUMMY, 5, from, to);
 
 	}
 
@@ -524,9 +524,9 @@ u64 gen_double_pushes(u32 *move_list, u8 pos) {
 		u8 from;
 
 		if(COLOR)
-			from = to << 16;
+			from = to - 16;
 		else
-			from = to >> 16;
+			from = to + 16;
 
 		move_list[pos++] = create_move(0, 0, 2, COLOR ^ 1, 7, 5, from, to);
 
@@ -741,8 +741,15 @@ u32 create_move(u8 promotion_type, u8 castle_dir, u8 move_type, u8 color, u8 c_p
 	 (u32) color << 18 | (u32) c_piece << 15 | (u32) piece << 12 | (u32) from << 6 | (u32) to);
 }
 
-
-
+/* Extract data from a move structure */
+#define prom_type(move)   		(move & 0x3000000) >> 24
+#define castle_dir(move)		(move & 0xC00000) >> 22
+#define move_type(move)         (move & 0x380000) >> 19
+#define color_type(move)        (move & 0x40000) >> 18
+#define c_piece_type(move)      (move & 0x38000) >> 15
+#define piece_type(move)	    (move & 0x7000) >> 12  	
+#define from_sq(move)          	(move & 0xFC0) >> 6
+#define to_sq(move)				move & 0x3F
 
 
 

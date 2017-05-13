@@ -12,7 +12,6 @@ u64 perft(u8 depth) {
 
 	bool is_valid_move;
 
-
 	if(depth == 0)
 		return 1;
 

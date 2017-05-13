@@ -4,12 +4,14 @@
 
 
 bool make_move(u32 move) {
+	nodes1++;
+
 	u64 from_bb, to_bb, from_to_bb, piece, c_piece, color;
 
 	from_bb = index_bb[from_sq(move)];
 	to_bb = index_bb[to_sq(move)];
 
-	printf("%u - %u - %u\n", from_sq(move), to_sq(move), move_type(move));
+	from_to_bb = from_bb ^ to_bb;
 
 	piece = piece_type(move);
 	c_piece = c_piece_type(move);
@@ -27,6 +29,8 @@ bool make_move(u32 move) {
 	switch(move_type(move)) {
 	
 		case 0 : 
+					/*quiet++;
+*/
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
 
@@ -44,7 +48,7 @@ bool make_move(u32 move) {
 													break;
 
 										case ROOKS: 
-													if(from_bb == 0U)
+													if(from_bb == 0)
 														hist[ply].castle_flags &= 0x1110;
 													else
 														hist[ply].castle_flags &= 0x1101;
@@ -65,7 +69,7 @@ bool make_move(u32 move) {
 													break;
 
 										case ROOKS: 
-													if(from_bb == 0x0100000000000000U)
+													if(from_bb == 0x0100000000000000)
 														hist[ply].castle_flags &= 0x1011;
 													else
 														hist[ply].castle_flags &= 0x0111;
@@ -80,6 +84,8 @@ bool make_move(u32 move) {
 					break;
 	
 		case 1 :
+					/*cap++;
+*/
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
 					piece_bb[color ^ 1][c_piece] ^= to_bb;
@@ -113,6 +119,8 @@ bool make_move(u32 move) {
 					break;
 	
 		case 2 : 
+					/*quiet++;
+*/
 					hist[ply].ep_sq = (from_bb << 8) >> 16 * color;
 					hist[ply].ep_flag = 1;
 
@@ -125,6 +133,8 @@ bool make_move(u32 move) {
 					break;
 
 		case 3 :	
+					en++;
+
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
 
@@ -137,6 +147,9 @@ bool make_move(u32 move) {
 					break;
 		
 		case 4 : 
+
+					/*cas++;
+*/
 					switch(castle_dir(move)) {
 						case 0: 
 								if(!(is_sq_attacked(1, color) & is_sq_attacked(2, color) & is_sq_attacked(3, color))) {
@@ -301,11 +314,30 @@ bool make_move(u32 move) {
 	}
 
 
-	if(is_sq_attacked((bit_scan_forward(piece_bb[color][KING])), color))
+	if(is_sq_attacked((bit_scan_forward(piece_bb[color][KING])), color)) {
+		nodes1 --;
+		/*quiet --;
+		cap --;
+		en --;
+		cas --;
+*/
+		//unmake_move();
+
+		/*printf("nodes - %llu\n", nodes1);
+		*//*printf("nodes - %llu, quiet - %llu, captures - %llu, en_passant - %llu, castling - %llu\n", 
+			nodes1, quiet, cap, en, cas);
+		*/
 		return false;
+	}
 
-	//print_bb(occupied);
+	/*
+	printf("nodes - %llu, quiet - %llu, captures - %llu, en_passant - %llu, castling - %llu\n", 
+			nodes1, quiet, cap, en, cas);
+	*/
 
+
+	/*printf("nodes - %llu\n", nodes1);
+*/
 	COLOR ^= 1;
 
 	return true; 

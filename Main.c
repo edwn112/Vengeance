@@ -16,8 +16,14 @@
 
 int main(int argc, char **argv) {
 
+	nodes1 = 0;
+	quiet = 0;
+	cap = 0;
+	en = 0;
+	cas = 0;
+
 	struct timeb start, end;
-	u8 diff;
+	double diff;
 
 	init_piece_bb(); 
 	init_index_bb();
@@ -35,7 +41,8 @@ int main(int argc, char **argv) {
 	
 	u8 i, nodes;
 
-	COLOR = 1;
+	COLOR = BLACK;
+
 
 //	for(i = 0; i < MAX_DEPTH; i++) {
 
@@ -48,10 +55,10 @@ int main(int argc, char **argv) {
 
 		ftime(&end);
 
-		diff = (u8)(1000.0 * (end.time - start.time) 
-			+ (end.millitm - start.millitm));
+		diff = ((1000.0 * (end.time - start.time) 
+			+ (end.millitm - start.millitm)) / 1000);
 
-		printf("Nodes - %u and operation took %u milliseconds\n", nodes, diff);
+		printf("%llu nodes searched and operation took %.3f seconds\n", nodes1, diff);
 //	}
 
 	return 0;
