@@ -4,6 +4,6 @@
 #include "globals.h"
 
 bool make_move(u32 move);
-void unmake_move();
+void unmake_move(u32 move);
 
 #endif

@@ -4,7 +4,6 @@
 
 
 bool make_move(u32 move) {
-	nodes1++;
 
 	u64 from_bb, to_bb, from_to_bb, piece, c_piece, color;
 
@@ -30,7 +29,8 @@ bool make_move(u32 move) {
 	
 		case 0 : 
 					/*quiet++;
-*/
+					*/
+
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
 
@@ -85,7 +85,8 @@ bool make_move(u32 move) {
 	
 		case 1 :
 					/*cap++;
-*/
+					*/
+
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
 					piece_bb[color ^ 1][c_piece] ^= to_bb;
@@ -120,7 +121,8 @@ bool make_move(u32 move) {
 	
 		case 2 : 
 					/*quiet++;
-*/
+					*/
+
 					hist[ply].ep_sq = (from_bb << 8) >> 16 * color;
 					hist[ply].ep_flag = 1;
 
@@ -149,7 +151,8 @@ bool make_move(u32 move) {
 		case 4 : 
 
 					/*cas++;
-*/
+					*/
+
 					switch(castle_dir(move)) {
 						case 0: 
 								if(!(is_sq_attacked(1, color) & is_sq_attacked(2, color) & is_sq_attacked(3, color))) {
@@ -315,19 +318,20 @@ bool make_move(u32 move) {
 
 
 	if(is_sq_attacked((bit_scan_forward(piece_bb[color][KING])), color)) {
-		nodes1 --;
+		
 		/*quiet --;
 		cap --;
 		en --;
 		cas --;
-*/
-		//unmake_move();
-
-		/*printf("nodes - %llu\n", nodes1);
-		*//*printf("nodes - %llu, quiet - %llu, captures - %llu, en_passant - %llu, castling - %llu\n", 
-			nodes1, quiet, cap, en, cas);
 		*/
+
+	/*	printf("nodes - %llu\n", nodes1);
+		printf("nodes - %llu, quiet - %llu, captures - %llu, en_passant - %llu, castling - %llu\n", 
+			nodes1, quiet, cap, en, cas);
+	*/	
+
 		return false;
+	
 	}
 
 	/*
@@ -337,15 +341,18 @@ bool make_move(u32 move) {
 
 
 	/*printf("nodes - %llu\n", nodes1);
-*/
+	*/
+
 	COLOR ^= 1;
 
 	return true; 
 }
 
-void unmake_move() {
+void unmake_move(u32 move1) {
 
-	u32 move = hist[ply].move;
+	COLOR ^= 1;
+
+	u32 move = move1;
 
 	u64 from_bb, to_bb, from_to_bb, piece, c_piece, color;
 

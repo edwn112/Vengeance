@@ -39,9 +39,10 @@ int main(int argc, char **argv) {
 
 	hist[ply] = hist_add;
 	
-	u8 i, nodes;
+	u8 i;
+	u64 nodes;
 
-	COLOR = BLACK;
+	COLOR = WHITE;
 
 
 //	for(i = 0; i < MAX_DEPTH; i++) {
@@ -58,7 +59,7 @@ int main(int argc, char **argv) {
 		diff = ((1000.0 * (end.time - start.time) 
 			+ (end.millitm - start.millitm)) / 1000);
 
-		printf("%llu nodes searched and operation took %.3f seconds\n", nodes1, diff);
+		printf("%llu nodes searched and operation took %.3f seconds\n", nodes, diff);
 //	}
 
 	return 0;

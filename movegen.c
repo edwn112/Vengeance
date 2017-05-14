@@ -49,9 +49,9 @@ u64 gen_attacks(u32 *move_list, u8 pos) {
 u64 gen_special_moves(u32 *move_list, u8 pos) {
 
 	pos = gen_double_pushes(move_list, pos);
-	pos = gen_castling_moves(move_list, pos);
-	pos = gen_enpassant_moves(move_list, pos);
-	pos = gen_promotions(move_list, pos);
+	//pos = gen_castling_moves(move_list, pos);
+	//pos = gen_enpassant_moves(move_list, pos);
+	//pos = gen_promotions(move_list, pos);
 
 	return pos;
 }
@@ -61,19 +61,19 @@ u64 gen_special_moves(u32 *move_list, u8 pos) {
 
 u64 gen_king_pushes(u32 *move_list, u8 pos) {
 
-	u64 king_bb = piece_bb[COLOR ^ 1][KING];
+	u64 king_bb = piece_bb[COLOR][KING];
 
 	while(king_bb) {
 		const u8 from = bit_scan_forward(king_bb);
 		king_bb &= king_bb - 1;
 
-		u64 pushes  = get_king_attacks(from) & (~occupied);
+		u64 pushes  = get_king_attacks(from) & empty;
 
 		while(pushes) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, DUMMY, KING, from, to);
+			move_list[pos++] = create_move(0, 0, 0, COLOR, DUMMY, KING, from, to);
 		}
 	}
 
@@ -82,19 +82,19 @@ u64 gen_king_pushes(u32 *move_list, u8 pos) {
 
 u64 gen_queen_pushes(u32 *move_list, u8 pos) {
 	
-	u64 queen_bb = piece_bb[COLOR ^ 1][QUEEN];
+	u64 queen_bb = piece_bb[COLOR][QUEEN];
 
 	while(queen_bb) {
 		const u8 from = bit_scan_forward(queen_bb);
 		queen_bb &= queen_bb - 1;
 		
-		u64 pushes = Qmagic(from, occupied) & (~occupied); 
+		u64 pushes = Qmagic(from, occupied) & empty; 
 	
 		while(pushes) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, DUMMY, QUEEN, from, to);
+			move_list[pos++] = create_move(0, 0, 0, COLOR, DUMMY, QUEEN, from, to);
 		}
 	}
 
@@ -102,19 +102,19 @@ u64 gen_queen_pushes(u32 *move_list, u8 pos) {
 }
 
 u64 gen_bishop_pushes(u32 *move_list, u8 pos) {
-	u64 bishops_bb = piece_bb[COLOR ^ 1][BISHOPS];
+	u64 bishops_bb = piece_bb[COLOR][BISHOPS];
 			
 	while(bishops_bb) {
 		const u8 from = bit_scan_forward(bishops_bb);
 		bishops_bb &= bishops_bb - 1;
 		
-		u64 pushes = Bmagic(from, occupied) & (~occupied); 
+		u64 pushes = Bmagic(from, occupied) & empty; 
 	
 		while(pushes) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 	
-			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, 7, BISHOPS, from, to);
+			move_list[pos++] = create_move(0, 0, 0, COLOR, DUMMY, BISHOPS, from, to);
 		}
 	}
 
@@ -123,7 +123,7 @@ u64 gen_bishop_pushes(u32 *move_list, u8 pos) {
 
 u64 gen_knight_pushes(u32 *move_list, u8 pos) {
 
-	u64 knights_bb = piece_bb[COLOR ^ 1][KNIGHTS];
+	u64 knights_bb = piece_bb[COLOR][KNIGHTS];
 
 	while(knights_bb) {
 		const u8 from = bit_scan_forward(knights_bb);
@@ -135,7 +135,7 @@ u64 gen_knight_pushes(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, DUMMY, KNIGHTS, from, to);
+			move_list[pos++] = create_move(0, 0, 0, COLOR, DUMMY, KNIGHTS, from, to);
 		}
 	}
 
@@ -143,19 +143,19 @@ u64 gen_knight_pushes(u32 *move_list, u8 pos) {
 }
 
 u64 gen_rook_pushes(u32 *move_list, u8 pos) {
-	u64 rooks_bb = piece_bb[COLOR ^ 1][ROOKS];
+	u64 rooks_bb = piece_bb[COLOR][ROOKS];
 		
 	while(rooks_bb) {
 		const u8 from = bit_scan_forward(rooks_bb);
 		rooks_bb &= rooks_bb - 1;
 		
-		u64 pushes = Rmagic(from, occupied) & (~occupied); 
+		u64 pushes = Rmagic(from, occupied) & empty; 
 	
 		while(pushes) {
 			const u8 to = bit_scan_forward(pushes);
 			pushes &= pushes - 1;
 
-			move_list[pos++] = create_move(0, 0, 0, 0, 7, ROOKS, from, to); 
+			move_list[pos++] = create_move(0, 0, 0, COLOR, DUMMY, ROOKS, from, to); 
 		}
 	}
 
@@ -163,21 +163,17 @@ u64 gen_rook_pushes(u32 *move_list, u8 pos) {
 }
 
 u64 gen_pawn_pushes(u32 *move_list, u8 pos) {
-	u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
-	u64 pawns_single_push_target_squares = ((pawns_bb << 8) >> 16 * (COLOR ^ 1)) & empty;
+	u64 pawns_bb = piece_bb[COLOR][PAWNS];
+	u64 pawns_single_push_target_squares = ((pawns_bb << 8) >> (16 * (COLOR)))& empty;
+	u64 pawns_can_push = (pawns_single_push_target_squares >> 8) << (16 * (COLOR));
 
-	while(pawns_single_push_target_squares) {
+	while(pawns_can_push) {
+		const u8 from = bit_scan_forward(pawns_can_push);
+		pawns_can_push &= pawns_can_push - 1;
 		const u8 to = bit_scan_forward(pawns_single_push_target_squares);
 		pawns_single_push_target_squares &= pawns_single_push_target_squares - 1;
 
-		u8 from;
-
-		if(COLOR)
-			from = to - 8;
-		else
-			from = to + 8;
-
-		move_list[pos++] = create_move(0, 0, 0, COLOR ^ 1, DUMMY, 5, from, to);
+		move_list[pos++] = create_move(0, 0, 0, COLOR, DUMMY, PAWNS, from, to);
 
 	}
 
@@ -188,7 +184,7 @@ u64 gen_pawn_pushes(u32 *move_list, u8 pos) {
 /* attacks */
 
 u64 gen_king_attacks(u32 *move_list, u8 pos) {
-	u64 king_bb = piece_bb[COLOR ^ 1][KING];
+	u64 king_bb = piece_bb[COLOR][KING];
 
 	while(king_bb) {
 		const u8 from = bit_scan_forward(king_bb);
@@ -200,43 +196,43 @@ u64 gen_king_attacks(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(attacks);
 			attacks &= attacks - 1;
 
-			if(to & piece_bb[COLOR][QUEEN]) {
-				move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, QUEEN, KING, from, to); 
-			} else if(piece_bb[COLOR][BISHOPS]) {
-				u64 bishops_bb = piece_bb[COLOR][BISHOPS];
+			if(index_bb[to] & piece_bb[COLOR ^ 1][QUEEN]) {
+				move_list[pos++] = create_move(0, 0, 1, COLOR, QUEEN, KING, from, to); 
+			} else if(piece_bb[COLOR ^ 1][BISHOPS]) {
+				u64 bishops_bb = piece_bb[COLOR ^ 1][BISHOPS];
 				while(bishops_bb) {
 					const u8 sq = bit_scan_forward(bishops_bb);
 					bishops_bb &= bishops_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, BISHOPS, KING, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, BISHOPS, KING, from, to);
 				}
-			} else if(piece_bb[COLOR][KNIGHTS]) {
-				u64 knights_bb = piece_bb[COLOR][KNIGHTS];
+			} else if(piece_bb[COLOR ^ 1][KNIGHTS]) {
+				u64 knights_bb = piece_bb[COLOR ^ 1][KNIGHTS];
 				while(knights_bb) {
 					const u8 sq = bit_scan_forward(knights_bb);
 					knights_bb &= knights_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, KNIGHTS, KING, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, KNIGHTS, KING, from, to);
 				}
-			} else if(piece_bb[COLOR][ROOKS]) {
-				u64 rooks_bb = piece_bb[COLOR][ROOKS];
+			} else if(piece_bb[COLOR ^ 1][ROOKS]) {
+				u64 rooks_bb = piece_bb[COLOR ^ 1][ROOKS];
 				while(rooks_bb) {
 					const u8 sq = bit_scan_forward(rooks_bb);
 					rooks_bb &= rooks_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, ROOKS, KING, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, ROOKS, KING, from, to);
 				}
-			} else if(piece_bb[COLOR][PAWNS]) {
-				u64 pawns_bb = piece_bb[COLOR][PAWNS];
+			} else if(piece_bb[COLOR ^ 1][PAWNS]) {
+				u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
 				while(pawns_bb) {
 					const u8 sq = bit_scan_forward(pawns_bb);
 					pawns_bb &= pawns_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, PAWNS, KING, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, PAWNS, KING, from, to);
 				}
 			}
 
@@ -247,7 +243,7 @@ u64 gen_king_attacks(u32 *move_list, u8 pos) {
 }
 
 u64 gen_queen_attacks(u32 *move_list, u8 pos) {
-	u64 queen_bb = piece_bb[COLOR ^ 1][QUEEN];
+	u64 queen_bb = piece_bb[COLOR][QUEEN];
 
 	while(queen_bb) {
 		const u8 from = bit_scan_forward(queen_bb);
@@ -259,45 +255,46 @@ u64 gen_queen_attacks(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(attacks);
 			attacks &= attacks - 1;
 
-			if(to & piece_bb[COLOR][QUEEN]) {
-				move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, QUEEN, QUEEN, from, to); 
-			} else if(piece_bb[COLOR][BISHOPS]) {
-				u64 bishops_bb = piece_bb[COLOR][BISHOPS];
+			if(index_bb[to] & piece_bb[COLOR ^ 1][QUEEN]) {
+				move_list[pos++] = create_move(0, 0, 1, COLOR, QUEEN, QUEEN, from, to); 
+			} else if(piece_bb[COLOR ^ 1][BISHOPS]) {
+				u64 bishops_bb = piece_bb[COLOR ^ 1][BISHOPS];
 				while(bishops_bb) {
 					const u8 sq = bit_scan_forward(bishops_bb);
 					bishops_bb &= bishops_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, BISHOPS, QUEEN, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, BISHOPS, QUEEN, from, to);
 				}
-			} else if(piece_bb[COLOR][KNIGHTS]) {
-				u64 knights_bb = piece_bb[COLOR][KNIGHTS];
+			} else if(piece_bb[COLOR ^ 1][KNIGHTS]) {
+				u64 knights_bb = piece_bb[COLOR ^ 1][KNIGHTS];
 				while(knights_bb) {
 					const u8 sq = bit_scan_forward(knights_bb);
 					knights_bb &= knights_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, KNIGHTS, QUEEN, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, KNIGHTS, QUEEN, from, to);
 				}
-			} else if(piece_bb[COLOR][ROOKS]) {
-				u64 rooks_bb = piece_bb[COLOR][ROOKS];
+			} else if(piece_bb[COLOR ^ 1][ROOKS]) {
+				u64 rooks_bb = piece_bb[COLOR ^ 1][ROOKS];
 				while(rooks_bb) {
 					const u8 sq = bit_scan_forward(rooks_bb);
 					rooks_bb &= rooks_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, ROOKS, QUEEN, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, ROOKS, QUEEN, from, to);
 				}
-			} else if(piece_bb[COLOR][PAWNS]) {
-				u64 pawns_bb = piece_bb[COLOR][PAWNS];
+			} else if(piece_bb[COLOR ^ 1][PAWNS]) {
+				u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
 				while(pawns_bb) {
 					const u8 sq = bit_scan_forward(pawns_bb);
 					pawns_bb &= pawns_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, PAWNS, QUEEN, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, PAWNS, QUEEN, from, to);
 				}
 			}
+
 		}
 	}
 
@@ -305,7 +302,7 @@ u64 gen_queen_attacks(u32 *move_list, u8 pos) {
 }
 
 u64 gen_bishop_attacks(u32 *move_list, u8 pos) {
-	u64 bishop_bb = piece_bb[COLOR ^ 1][BISHOPS];
+	u64 bishop_bb = piece_bb[COLOR][BISHOPS];
 
 	while(bishop_bb) {
 		const u8 from = bit_scan_forward(bishop_bb);
@@ -317,45 +314,46 @@ u64 gen_bishop_attacks(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(attacks);
 			attacks &= attacks - 1;
 
-			if(to & piece_bb[COLOR][QUEEN]) {
-				move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, QUEEN, BISHOPS, from, to); 
-			} else if(piece_bb[COLOR][BISHOPS]) {
-				u64 bishops_bb = piece_bb[COLOR][BISHOPS];
+			if(index_bb[to] & piece_bb[COLOR ^ 1][QUEEN]) {
+				move_list[pos++] = create_move(0, 0, 1, COLOR, QUEEN, BISHOPS, from, to); 
+			} else if(piece_bb[COLOR ^ 1][BISHOPS]) {
+				u64 bishops_bb = piece_bb[COLOR ^ 1][BISHOPS];
 				while(bishops_bb) {
 					const u8 sq = bit_scan_forward(bishops_bb);
 					bishops_bb &= bishops_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, BISHOPS, BISHOPS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, BISHOPS, BISHOPS, from, to);
 				}
-			} else if(piece_bb[COLOR][KNIGHTS]) {
-				u64 knights_bb = piece_bb[COLOR][KNIGHTS];
+			} else if(piece_bb[COLOR ^ 1][KNIGHTS]) {
+				u64 knights_bb = piece_bb[COLOR ^ 1][KNIGHTS];
 				while(knights_bb) {
 					const u8 sq = bit_scan_forward(knights_bb);
 					knights_bb &= knights_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, KNIGHTS, BISHOPS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, KNIGHTS, BISHOPS, from, to);
 				}
-			} else if(piece_bb[COLOR][ROOKS]) {
-				u64 rooks_bb = piece_bb[COLOR][ROOKS];
+			} else if(piece_bb[COLOR ^ 1][ROOKS]) {
+				u64 rooks_bb = piece_bb[COLOR ^ 1][ROOKS];
 				while(rooks_bb) {
 					const u8 sq = bit_scan_forward(rooks_bb);
 					rooks_bb &= rooks_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, ROOKS, BISHOPS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, ROOKS, BISHOPS, from, to);
 				}
-			} else if(piece_bb[COLOR][PAWNS]) {
-				u64 pawns_bb = piece_bb[COLOR][PAWNS];
+			} else if(piece_bb[COLOR ^ 1][PAWNS]) {
+				u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
 				while(pawns_bb) {
 					const u8 sq = bit_scan_forward(pawns_bb);
 					pawns_bb &= pawns_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, PAWNS, BISHOPS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, PAWNS, BISHOPS, from, to);
 				}
 			}
+
 		}
 	}
 
@@ -364,7 +362,7 @@ u64 gen_bishop_attacks(u32 *move_list, u8 pos) {
 
 u64 gen_knight_attacks(u32 *move_list, u8 pos) {
 	
-	u64 knights_bb = piece_bb[COLOR ^ 1][KNIGHTS];
+	u64 knights_bb = piece_bb[COLOR][KNIGHTS];
 
 	while(knights_bb) {
 		const u8 from = bit_scan_forward(knights_bb);
@@ -376,6 +374,51 @@ u64 gen_knight_attacks(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(attacks);
 			attacks &= attacks - 1;
 
+			while(attacks) {
+			const u8 to = bit_scan_forward(attacks);
+			attacks &= attacks - 1;
+
+			if(index_bb[to] & piece_bb[COLOR ^ 1][QUEEN]) {
+				move_list[pos++] = create_move(0, 0, 1, COLOR, QUEEN, KNIGHTS, from, to); 
+			} else if(piece_bb[COLOR ^ 1][BISHOPS]) {
+				u64 bishops_bb = piece_bb[COLOR ^ 1][BISHOPS];
+				while(bishops_bb) {
+					const u8 sq = bit_scan_forward(bishops_bb);
+					bishops_bb &= bishops_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR, BISHOPS, KNIGHTS, from, to);
+				}
+			} else if(piece_bb[COLOR ^ 1][KNIGHTS]) {
+				u64 knights_bb = piece_bb[COLOR ^ 1][KNIGHTS];
+				while(knights_bb) {
+					const u8 sq = bit_scan_forward(knights_bb);
+					knights_bb &= knights_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR, KNIGHTS, KNIGHTS, from, to);
+				}
+			} else if(piece_bb[COLOR ^ 1][ROOKS]) {
+				u64 rooks_bb = piece_bb[COLOR ^ 1][ROOKS];
+				while(rooks_bb) {
+					const u8 sq = bit_scan_forward(rooks_bb);
+					rooks_bb &= rooks_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR, ROOKS, KNIGHTS, from, to);
+				}
+			} else if(piece_bb[COLOR ^ 1][PAWNS]) {
+				u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
+				while(pawns_bb) {
+					const u8 sq = bit_scan_forward(pawns_bb);
+					pawns_bb &= pawns_bb - 1;
+
+					if(sq == to)
+						move_list[pos++] = create_move(0, 0, 1, COLOR, PAWNS, KNIGHTS, from, to);
+				}
+			}
+
+		}
 		}
 	}
 
@@ -383,7 +426,7 @@ u64 gen_knight_attacks(u32 *move_list, u8 pos) {
 }
 
 u64 gen_rook_attacks(u32 *move_list, u8 pos) {
-	u64 rooks_bb = piece_bb[COLOR ^ 1][ROOKS];
+	u64 rooks_bb = piece_bb[COLOR][ROOKS];
 
 	while(rooks_bb) {
 		const u8 from = bit_scan_forward(rooks_bb);
@@ -395,45 +438,46 @@ u64 gen_rook_attacks(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(attacks);
 			attacks &= attacks - 1;
 
-			if(to & piece_bb[COLOR][QUEEN]) {
-				move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, QUEEN, ROOKS, from, to); 
-			} else if(piece_bb[COLOR][BISHOPS]) {
-				u64 bishops_bb = piece_bb[COLOR][BISHOPS];
+			if(index_bb[to] & piece_bb[COLOR ^ 1][QUEEN]) {
+				move_list[pos++] = create_move(0, 0, 1, COLOR, QUEEN, ROOKS, from, to); 
+			} else if(piece_bb[COLOR ^ 1][BISHOPS]) {
+				u64 bishops_bb = piece_bb[COLOR ^ 1][BISHOPS];
 				while(bishops_bb) {
 					const u8 sq = bit_scan_forward(bishops_bb);
 					bishops_bb &= bishops_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, BISHOPS, ROOKS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, BISHOPS, ROOKS, from, to);
 				}
-			} else if(piece_bb[COLOR][KNIGHTS]) {
-				u64 knights_bb = piece_bb[COLOR][KNIGHTS];
+			} else if(piece_bb[COLOR ^ 1][KNIGHTS]) {
+				u64 knights_bb = piece_bb[COLOR ^ 1][KNIGHTS];
 				while(knights_bb) {
 					const u8 sq = bit_scan_forward(knights_bb);
 					knights_bb &= knights_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, KNIGHTS, ROOKS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, KNIGHTS, ROOKS, from, to);
 				}
-			} else if(piece_bb[COLOR][ROOKS]) {
-				u64 rooks_bb = piece_bb[COLOR][ROOKS];
+			} else if(piece_bb[COLOR ^ 1][ROOKS]) {
+				u64 rooks_bb = piece_bb[COLOR ^ 1][ROOKS];
 				while(rooks_bb) {
 					const u8 sq = bit_scan_forward(rooks_bb);
 					rooks_bb &= rooks_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, ROOKS, ROOKS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, ROOKS, ROOKS, from, to);
 				}
-			} else if(piece_bb[COLOR][PAWNS]) {
-				u64 pawns_bb = piece_bb[COLOR][PAWNS];
+			} else if(piece_bb[COLOR ^ 1][PAWNS]) {
+				u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
 				while(pawns_bb) {
 					const u8 sq = bit_scan_forward(pawns_bb);
 					pawns_bb &= pawns_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, PAWNS, ROOKS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, PAWNS, ROOKS, from, to);
 				}
 			}
+
 		}
 	}
 
@@ -441,7 +485,7 @@ u64 gen_rook_attacks(u32 *move_list, u8 pos) {
 }
 
 u64 gen_pawn_attacks(u32 *move_list, u8 pos) {
-	u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
+	u64 pawns_bb = piece_bb[COLOR][PAWNS];
 
 	while(pawns_bb) {
 		const u8 from = bit_scan_forward(pawns_bb);
@@ -453,45 +497,46 @@ u64 gen_pawn_attacks(u32 *move_list, u8 pos) {
 			const u8 to = bit_scan_forward(attacks);
 			attacks &= attacks - 1;
 
-			if(to & piece_bb[COLOR][QUEEN]) {
-				move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, QUEEN, PAWNS, from, to); 
-			} else if(piece_bb[COLOR][BISHOPS]) {
-				u64 bishops_bb = piece_bb[COLOR][BISHOPS];
+			if(index_bb[to] & piece_bb[COLOR ^ 1][QUEEN]) {
+				move_list[pos++] = create_move(0, 0, 1, COLOR, QUEEN, PAWNS, from, to); 
+			} else if(piece_bb[COLOR ^ 1][BISHOPS]) {
+				u64 bishops_bb = piece_bb[COLOR ^ 1][BISHOPS];
 				while(bishops_bb) {
 					const u8 sq = bit_scan_forward(bishops_bb);
 					bishops_bb &= bishops_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, BISHOPS, PAWNS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, BISHOPS, PAWNS, from, to);
 				}
-			} else if(piece_bb[COLOR][KNIGHTS]) {
-				u64 knights_bb = piece_bb[COLOR][KNIGHTS];
+			} else if(piece_bb[COLOR ^ 1][KNIGHTS]) {
+				u64 knights_bb = piece_bb[COLOR ^ 1][KNIGHTS];
 				while(knights_bb) {
 					const u8 sq = bit_scan_forward(knights_bb);
 					knights_bb &= knights_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, KNIGHTS, PAWNS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, KNIGHTS, PAWNS, from, to);
 				}
-			} else if(piece_bb[COLOR][ROOKS]) {
-				u64 rooks_bb = piece_bb[COLOR][ROOKS];
+			} else if(piece_bb[COLOR ^ 1][ROOKS]) {
+				u64 rooks_bb = piece_bb[COLOR ^ 1][ROOKS];
 				while(rooks_bb) {
 					const u8 sq = bit_scan_forward(rooks_bb);
 					rooks_bb &= rooks_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, ROOKS, PAWNS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, ROOKS, PAWNS, from, to);
 				}
-			} else if(piece_bb[COLOR][PAWNS]) {
-				u64 pawns_bb = piece_bb[COLOR][PAWNS];
+			} else if(piece_bb[COLOR ^ 1][PAWNS]) {
+				u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
 				while(pawns_bb) {
 					const u8 sq = bit_scan_forward(pawns_bb);
 					pawns_bb &= pawns_bb - 1;
 
 					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, COLOR ^ 1, PAWNS, PAWNS, from, to);
+						move_list[pos++] = create_move(0, 0, 1, COLOR, PAWNS, PAWNS, from, to);
 				}
 			}
+
 		}
 	}
 
@@ -505,31 +550,27 @@ u64 gen_pawn_attacks(u32 *move_list, u8 pos) {
 
 u64 gen_double_pushes(u32 *move_list, u8 pos) {
 	
-	u64 pawns_bb = piece_bb[COLOR ^ 1][PAWNS];
+	u64 pawns_bb = piece_bb[COLOR][PAWNS];
 	
-	if(COLOR ^ 1) 
+	if(COLOR) 
 		pawns_bb &= RANK_7;
 	else 
 		pawns_bb &= RANK_2;
 
-	u64 pawns_single_push = ((pawns_bb << 8) >> 16 * (COLOR ^ 1));
+	u64 pawns_single_push = ((pawns_bb << 8) >> (16 * COLOR)) & empty;
 
 	u64 pawns_double_push_target_squares = ((pawns_single_push << 8) 
-		>> (16 * (COLOR ^ 1))) & empty;
+		>> (16 * COLOR)) & empty;
 
-	while(pawns_double_push_target_squares) {
+	u64 pawns_can_push = (pawns_double_push_target_squares >> 16) << (32 * COLOR);
+
+	while(pawns_can_push) {
+		const u8 from = bit_scan_forward(pawns_can_push);
+		pawns_can_push &= pawns_can_push - 1;
 		const u8 to = bit_scan_forward(pawns_double_push_target_squares);
 		pawns_double_push_target_squares &= pawns_double_push_target_squares - 1;
 
-		u8 from;
-
-		if(COLOR)
-			from = to - 16;
-		else
-			from = to + 16;
-
-		move_list[pos++] = create_move(0, 0, 2, COLOR ^ 1, 7, 5, from, to);
-
+		move_list[pos++] = create_move(0, 0, 2, COLOR, DUMMY, PAWNS, from, to);
 	}
 
 	return pos;
