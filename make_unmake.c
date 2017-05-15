@@ -3,7 +3,7 @@
 #include "utility.h"
 
 
-bool make_move(u32 move) {
+void make_move(u32 move) {
 
 	u64 from_bb, to_bb, from_to_bb, piece, c_piece, color;
 
@@ -25,11 +25,15 @@ bool make_move(u32 move) {
 
 	hist[ply] = hist_add;
 
+	/*printf("%u ", move_type(move));
+*/
+
+
 	switch(move_type(move)) {
 	
 		case 0 : 
-					/*quiet++;
-					*/
+					quiet++;
+					
 
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
@@ -84,8 +88,8 @@ bool make_move(u32 move) {
 					break;
 	
 		case 1 :
-					/*cap++;
-					*/
+					cap++;
+					
 
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
@@ -120,8 +124,8 @@ bool make_move(u32 move) {
 					break;
 	
 		case 2 : 
-					/*quiet++;
-					*/
+					quiet++;
+					
 
 					hist[ply].ep_sq = (from_bb << 8) >> 16 * color;
 					hist[ply].ep_flag = 1;
@@ -150,8 +154,8 @@ bool make_move(u32 move) {
 		
 		case 4 : 
 
-					/*cas++;
-					*/
+					cas++;
+					
 
 					switch(castle_dir(move)) {
 						case 0: 
@@ -316,41 +320,10 @@ bool make_move(u32 move) {
 
 	}
 
-
-	if(is_sq_attacked((bit_scan_forward(piece_bb[color][KING])), color)) {
-		
-		/*quiet --;
-		cap --;
-		en --;
-		cas --;
-		*/
-
-	/*	printf("nodes - %llu\n", nodes1);
-		printf("nodes - %llu, quiet - %llu, captures - %llu, en_passant - %llu, castling - %llu\n", 
-			nodes1, quiet, cap, en, cas);
-	*/	
-
-		return false;
-	
-	}
-
-	/*
-	printf("nodes - %llu, quiet - %llu, captures - %llu, en_passant - %llu, castling - %llu\n", 
-			nodes1, quiet, cap, en, cas);
-	*/
-
-
-	/*printf("nodes - %llu\n", nodes1);
-	*/
-
 	COLOR ^= 1;
-
-	return true; 
 }
 
 void unmake_move(u32 move1) {
-
-	COLOR ^= 1;
 
 	u32 move = move1;
 
@@ -386,6 +359,7 @@ void unmake_move(u32 move1) {
 
 					break;
 		case 2 : 
+					printf("unmake\n");
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
 					
@@ -547,6 +521,8 @@ void unmake_move(u32 move1) {
 				
 				break;
 	}
+
+	COLOR ^= 1;
 
 	ply = ply - 1;
 }

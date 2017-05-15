@@ -17,7 +17,7 @@ void print_bb(u64 board) {
 			if ((((u64)1)<<((row*8+col)) & board) == (u64)1<<(row*8+col))
 				putchar('X');
 			else
-				putchar('_');
+				putchar('.');
 		}
 		printf("|");
 	}

@@ -44,23 +44,32 @@ int main(int argc, char **argv) {
 
 	COLOR = WHITE;
 
+	printf("Enter\n");
 
-//	for(i = 0; i < MAX_DEPTH; i++) {
+	i = 0;
 
-		u8 depth;
-		scanf("%u", &depth);
+	while(i < MAX_DEPTH) {
 
+		printf("\n\n");
+		
 		ftime(&start);
 
-		nodes = perft(depth);
+		nodes = perft(i);
 
 		ftime(&end);
 
 		diff = ((1000.0 * (end.time - start.time) 
 			+ (end.millitm - start.millitm)) / 1000);
+		
+		printf("Depth - %d\n", i);
+
+		printf("color - %d, checks - %llu, quiet - %llu, captures - %llu\n", COLOR, check, quiet, cap);
+	
 
 		printf("%llu nodes searched and operation took %.3f seconds\n", nodes, diff);
-//	}
+
+		i++;
+	}
 
 	return 0;
 }

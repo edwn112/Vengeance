@@ -2,6 +2,8 @@
 #include "perft.h"
 #include "movegen.h"
 #include "make_unmake.h"
+#include "utility.h"
+
 
 u64 perft(u8 depth) {
 
@@ -10,8 +12,6 @@ u64 perft(u8 depth) {
 
 	u64 nodes = 0;
 	u8 n_moves, i;
-
-	n_moves = gen_moves(move_list);
 
 
 /*	printf("\n\n%u\n", n_moves);
@@ -23,13 +23,17 @@ u64 perft(u8 depth) {
 	
 	}
 */
-	if(depth == 1)
-		return n_moves;
+	if(depth == 0)
+		return 1;
+
+	n_moves = gen_moves(move_list);
 
 	for(i = 0; i < n_moves; i++) {
 		
-		if(make_move(move_list[i]))
-			nodes += perft(depth - 1);
+		make_move(move_list[i]);	
+
+		if(!is_sq_attacked((bit_scan_forward(piece_bb[COLOR][KING])), COLOR)) 
+			nodes += perft(depth - 1);	
 
 		unmake_move(move_list[i]);
 	}

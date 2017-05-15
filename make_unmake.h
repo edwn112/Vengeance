@@ -3,7 +3,7 @@
 
 #include "globals.h"
 
-bool make_move(u32 move);
+void make_move(u32 move);
 void unmake_move(u32 move);
 
 #endif

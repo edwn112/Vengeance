@@ -19,14 +19,14 @@ typedef unsigned long long int u64;
 #define C64(constantU64) constantU64
 
 #define MAX_MOVES 256
-#define MAX_DEPTH 8
+#define MAX_DEPTH 4
 
 #define WHITE 0
 #define BLACK 1
 
 u8 COLOR;
 
-u64 nodes1, quiet, cap, en, cas;
+u64 nodes1, quiet, cap, en, cas, check;
 
 /* pieceBB is an array containing bitboards for all pieces */
 
@@ -78,6 +78,9 @@ u64 occupied, empty;
 #define piece_type(move)	    (move & 0x7000) >> 12  	
 #define from_sq(move)          	(move & 0xFC0) >> 6
 #define to_sq(move)				move & 0x3F
+
+#define RANK_4 0x00000000FF000000U
+#define RANK_5 0x000000FF00000000U
 
 #define RANK_2 0x000000000000FF00U
 #define RANK_7 0x00FF000000000000U
