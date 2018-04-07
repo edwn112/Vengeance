@@ -69,11 +69,8 @@ int main(int argc, char **argv) {
 		
 		printf("Depth(%d)=   ", i);
 
-		printf("%llu (%.3f sec), color - %u\n", (nodes + check), diff, color);
-
-//		printf("color - %d, checks - %llu, quiet - %llu, captures - %llu\n", color, check, quiet, cap);
+		printf("%8llu (%.3f sec), color - %s, quiet - %8llu, captures - %8llu, en - %6llu, cas - %6llu, checks - %8llu\n", nodes, diff, ((color==0) ? "WHITE" : "BLACK"), quiet, cap, en, cas, check);
 		
-		color = color^1;
 		i++;
 	}
 

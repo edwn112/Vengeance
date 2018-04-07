@@ -26,7 +26,7 @@ typedef unsigned long long int u64;
 
 u8 color;
 
-u64 nodes1, quiet, cap, en, cas, check;
+u64 quiet, cap, en, cas, check;
 
 /* pieceBB is an array containing bitboards for all pieces */
 
