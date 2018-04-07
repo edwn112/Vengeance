@@ -5,19 +5,21 @@
  *      Author: Amar Thapa
  */
 
-#include "globals.h"
+#include "Globals.h"
 #include "movegen.h"
 #include "magicmoves.h"
 #include "nonslidingmoves.h"
 #include "utility.h"
 
+
+typedef unsigned char u8;
 u64 gen_moves(u32 *move_list, u8 color) {
 	
 	u8 pos = 0;
 
 	pos = gen_pushes(move_list, pos, color);
 	pos = gen_attacks(move_list, pos, color);
-	//pos = gen_special_moves(move_list, pos);
+	//pos = gen_special_moves(move_list, pos, color);
 
 	return pos;
 }
@@ -286,7 +288,7 @@ u64 gen_queen_attacks(u32 *move_list, u8 pos, u8 color) {
 		queen_bb &= queen_bb - 1;
 		
 		u64 attacks = Qmagic(from, occupied) & piece_bb[color ^ 1][PIECES]; 
-		
+
 		while(attacks) {
 
 
@@ -558,25 +560,31 @@ u64 gen_rook_attacks(u32 *move_list, u8 pos, u8 color) {
 
 u64 gen_pawn_attacks(u32 *move_list, u8 pos, u8 color) {
 	u64 pawns_bb = piece_bb[color][PAWNS];
-/*
-	printf("SIDE - %u\n", color);
-	print_bb(pawns_bb);*/
 
 	while(pawns_bb) {
 		const u8 from = bit_scan_forward(pawns_bb);
 		pawns_bb &= pawns_bb - 1;
 
-//		print_bb(index_bb[from]);
-
-
-		u64 attacks = ((index_bb[from] << 7) >> 14 * (color ^ 1)) | ((index_bb[from] << 9) >> 16 * (color ^ 1));
-
+		u64 attacks = (((index_bb[from] << 7) & NOT_H_FILE) >> 14 * (color)) 
+			| (((index_bb[from] << 9) & NOT_A_FILE) >> 16 * (color));
 		
 		while(attacks) {
-
-
 			const u8 to = bit_scan_forward(attacks);
+
 			attacks &= attacks - 1;
+
+			if(piece_bb[color ^ 1][PAWNS]) {
+				u64 pawns_bb = piece_bb[color ^ 1][PAWNS];
+				while(pawns_bb) {
+
+					const u8 sq = bit_scan_forward(pawns_bb);
+					pawns_bb &= pawns_bb - 1;
+
+					if(sq == to) {
+						move_list[pos++] = create_move(0, 0, 1, color, PAWNS, PAWNS, from, to);
+					}
+				}
+			}
 
 			if(index_bb[to] & piece_bb[color ^ 1][QUEEN]) {
 				move_list[pos++] = create_move(0, 0, 1, color, QUEEN, PAWNS, from, to); 
@@ -614,17 +622,6 @@ u64 gen_pawn_attacks(u32 *move_list, u8 pos, u8 color) {
 						move_list[pos++] = create_move(0, 0, 1, color, ROOKS, PAWNS, from, to);
 				}
 			} 
-
-			if(piece_bb[color ^ 1][PAWNS]) {
-				u64 pawns_bb = piece_bb[color ^ 1][PAWNS];
-				while(pawns_bb) {
-					const u8 sq = bit_scan_forward(pawns_bb);
-					pawns_bb &= pawns_bb - 1;
-
-					if(sq == to)
-						move_list[pos++] = create_move(0, 0, 1, color, PAWNS, PAWNS, from, to);
-				}
-			}
 
 		}
 	}
