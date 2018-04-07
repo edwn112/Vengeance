@@ -1,11 +1,12 @@
 #include <stdbool.h>
 #include "make_unmake.h"
 #include "utility.h"
+#include "Globals.h"
 
 
 void make_move(u32 move) {
 
-	u64 from_bb, to_bb, from_to_bb, piece, c_piece, color;
+	u64 from_bb, to_bb, from_to_bb, piece, c_piece;
 
 	from_bb = index_bb[from_sq(move)];
 	to_bb = index_bb[to_sq(move)];
@@ -24,10 +25,6 @@ void make_move(u32 move) {
 	hist_add.castle_flags = hist[ply - 1].castle_flags;  
 
 	hist[ply] = hist_add;
-
-	/*printf("%u ", move_type(move));
-*/
-
 
 	switch(move_type(move)) {
 	
@@ -319,8 +316,6 @@ void make_move(u32 move) {
 				break;
 
 	}
-
-	COLOR ^= 1;
 }
 
 void unmake_move(u32 move1) {
@@ -359,7 +354,6 @@ void unmake_move(u32 move1) {
 
 					break;
 		case 2 : 
-					printf("unmake\n");
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
 					
@@ -521,8 +515,6 @@ void unmake_move(u32 move1) {
 				
 				break;
 	}
-
-	COLOR ^= 1;
 
 	ply = ply - 1;
 }

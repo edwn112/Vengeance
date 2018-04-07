@@ -3,6 +3,6 @@
 
 #include "globals.h"
 
-u64 perft(u8 depth);
+u64 perft(u8 depth, u8 color);
 
 #endif

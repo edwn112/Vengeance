@@ -6,6 +6,8 @@
  */
 
 #include <sys\timeb.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "globals.h"
 #include "utility.h"
@@ -16,11 +18,11 @@
 
 int main(int argc, char **argv) {
 
-	nodes1 = 0;
-	quiet = 0;
-	cap = 0;
-	en = 0;
-	cas = 0;
+	int depth = 0;
+
+	depth = atoi(argv[1]);
+
+	printf("Depth = %d\n", depth);
 
 	struct timeb start, end;
 	double diff;
@@ -42,32 +44,36 @@ int main(int argc, char **argv) {
 	u8 i;
 	u64 nodes;
 
-	COLOR = WHITE;
-
-	printf("Enter\n");
-
 	i = 0;
 
-	while(i < MAX_DEPTH) {
-
-		printf("\n\n");
+	printf("\n");
+	while(i <= depth) {
 		
 		ftime(&start);
 
-		nodes = perft(i);
+		nodes = 0;
+		quiet = 0;
+		cap = 0;
+		en = 0;
+		cas = 0;
+		check = 0;
+
+		color = WHITE;
+
+		nodes = perft(i, color);
 
 		ftime(&end);
 
 		diff = ((1000.0 * (end.time - start.time) 
 			+ (end.millitm - start.millitm)) / 1000);
 		
-		printf("Depth - %d\n", i);
+		printf("Depth(%d)=   ", i);
 
-		printf("color - %d, checks - %llu, quiet - %llu, captures - %llu\n", COLOR, check, quiet, cap);
-	
+		printf("%llu (%.3f sec), color - %u\n", (nodes + check), diff, color);
 
-		printf("%llu nodes searched and operation took %.3f seconds\n", nodes, diff);
-
+//		printf("color - %d, checks - %llu, quiet - %llu, captures - %llu\n", color, check, quiet, cap);
+		
+		color = color^1;
 		i++;
 	}
 

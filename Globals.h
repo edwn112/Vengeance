@@ -19,12 +19,12 @@ typedef unsigned long long int u64;
 #define C64(constantU64) constantU64
 
 #define MAX_MOVES 256
-#define MAX_DEPTH 4
+#define MAX_DEPTH 2
 
 #define WHITE 0
 #define BLACK 1
 
-u8 COLOR;
+u8 color;
 
 u64 nodes1, quiet, cap, en, cas, check;
 
