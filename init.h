@@ -10,16 +10,16 @@ void init_piece_bb() {
 
 	/* default positions of pieces on board */
 
-	piece_bb[0][KING] = 0x0000000000000008U;
-	piece_bb[0][QUEEN] = 0x0000000000000010U;
+	piece_bb[0][KING] = 0x0000000000000010U;
+	piece_bb[0][QUEEN] = 0x0000000000000008U;
 	piece_bb[0][BISHOPS] = 0x0000000000000024U;
 	piece_bb[0][KNIGHTS] = 0x0000000000000042U;
 	piece_bb[0][ROOKS] = 0x0000000000000081U;
 	piece_bb[0][PAWNS] = 0x000000000000FF00U;
 	piece_bb[0][PIECES] = 0x000000000000FFFFU;
 
-	piece_bb[1][KING] = 0x0800000000000000U;
-	piece_bb[1][QUEEN] = 0x1000000000000000U;
+	piece_bb[1][KING] = 0x1000000000000000U;
+	piece_bb[1][QUEEN] = 0x0800000000000000U;
 	piece_bb[1][BISHOPS] = 0x2400000000000000U;
 	piece_bb[1][KNIGHTS] = 0x4200000000000000U;
 	piece_bb[1][ROOKS] = 0x8100000000000000U;

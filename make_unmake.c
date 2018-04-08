@@ -17,21 +17,11 @@ void make_move(u32 move) {
 	c_piece = c_piece_type(move);
 	color = color_type(move);
 
-	ply = ply + 1;
-
-	hist_add.move = move;
-	//hist_add.ep_sq = hist[ply - 1].ep_sq;
-	//hist_add.ep_flag = hist[ply - 1].ep_flag;
-	//hist_add.castle_flags = hist[ply - 1].castle_flags;  
-
-	hist[ply] = hist_add;
-
 	switch(move_type(move)) {
 	
 		case 0 : 
 					quiet++;
 					
-
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
 
@@ -86,10 +76,7 @@ void make_move(u32 move) {
 	
 		case 1 :
 					cap++;
-/*					
-					print_bb(piece_bb[WHITE][PAWNS]);
-					Sleep(10);
-*/					
+
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
 					piece_bb[color ^ 1][c_piece] ^= to_bb;
@@ -97,6 +84,8 @@ void make_move(u32 move) {
 
 					occupied ^= from_bb;
 					empty ^= from_bb;
+
+					// why this castling stuff here
 /*
 					switch(color) {
 						case 0: 
@@ -152,9 +141,7 @@ void make_move(u32 move) {
 					break;
 		
 		case 4 : 
-
-					cas++;
-					
+					cas++;	
 
 					switch(castle_dir(move)) {
 						case 0: 
@@ -316,14 +303,10 @@ void make_move(u32 move) {
 							break;
 				}
 				break;
-
 	}
 }
 
-void unmake_move(u32 move1) {
-
-	u32 move = move1;
-
+void unmake_move(u32 move) {
 	u64 from_bb, to_bb, from_to_bb, piece, c_piece, color;
 
 	from_bb = index_bb[from_sq(move)];
@@ -517,6 +500,4 @@ void unmake_move(u32 move1) {
 				
 				break;
 	}
-
-	ply = ply - 1;
 }

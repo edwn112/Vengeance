@@ -2,3 +2,8 @@ perft 4 -0
 perft 5 -0
 perft 5 -0
 perft 5 -0
+perft 4 -0
+perft 4 -0
+perft 5 -0
+perft 6 -0
+perft 4 -0
