@@ -104,3 +104,22 @@ bool is_sq_attacked(u8 sq, const u8 color) {
 
 	return false;
 }
+
+int  divide(u8 depth, u8 color) {
+	u32 move_list[MAX_MOVES];
+	
+	for(u8 i = 0; i < gen_moves(move_list, color); i++) {
+		
+		ply=ply+1;
+		make_move(move_list[i]);
+	
+		printf("%u-%u -> %llu\n", from_sq(move_list[i]), to_sq(move_list[i]), perft(depth-1, color ^ 1));
+		unmake_move(move_list[i]);
+		ply = ply - 1;
+	} 
+
+
+	return 0;
+}
+
+
