@@ -24,6 +24,10 @@ u64 perft(u8 depth, u8 Color) {
 		ply = ply + 1;
 		
 		make_move(move_list[i]);
+		
+		print_bb(occupied);
+		Sleep(100);
+
 		if(!is_sq_attacked((bit_scan_forward(piece_bb[color][KING])), color)) { 
 			
 			u32 move = move_list[i];

@@ -14,8 +14,34 @@ void print_bb(u64 board) {
 	for (row=7;row>=0; row--) {
 		printf("\n|%d ", row+1);
 		for (col=0; col<8; col++) {
-			if ((((u64)1)<<((row*8+col)) & board) == (u64)1<<(row*8+col))
-				putchar('X');
+			if ((((u64)1)<<((row*8+col)) & board) == (u64)1<<(row*8+col)) {
+				
+				if((u64)1<<(row*8+col) & piece_bb[WHITE][KING])
+					putchar('K');
+				if((u64)1<<(row*8+col) & piece_bb[WHITE][QUEEN])
+					putchar('Q');
+				if((u64)1<<(row*8+col) & piece_bb[WHITE][BISHOPS])
+					putchar('B');
+				if((u64)1<<(row*8+col) & piece_bb[WHITE][KNIGHTS])
+					putchar('N');
+				if((u64)1<<(row*8+col) & piece_bb[WHITE][ROOKS])
+					putchar('R');
+				if((u64)1<<(row*8+col) & piece_bb[WHITE][PAWNS])
+					putchar('P');
+
+				if((u64)1<<(row*8+col) & piece_bb[BLACK][KING])
+					putchar('k');
+				if((u64)1<<(row*8+col) & piece_bb[BLACK][QUEEN])
+					putchar('q');
+				if((u64)1<<(row*8+col) & piece_bb[BLACK][BISHOPS])
+					putchar('b');
+				if((u64)1<<(row*8+col) & piece_bb[BLACK][KNIGHTS])
+					putchar('n');
+				if((u64)1<<(row*8+col) & piece_bb[BLACK][ROOKS])
+					putchar('r');
+				if((u64)1<<(row*8+col) & piece_bb[BLACK][PAWNS])
+					putchar('p');
+			}
 			else
 				putchar('.');
 		}
@@ -117,8 +143,6 @@ int  divide(u8 depth, u8 color) {
 		unmake_move(move_list[i]);
 		ply = ply - 1;
 	} 
-
-
 	return 0;
 }
 
