@@ -24,10 +24,9 @@ void make_move(u32 move) {
 					
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
-
 					occupied ^= from_to_bb;
 					empty ^= from_to_bb;
-					
+
 					/*switch(color) {
 						case 0: 
 								if(castling_rights[0]) {
@@ -76,7 +75,6 @@ void make_move(u32 move) {
 	
 		case 1 :
 					cap++;
-
 					piece_bb[color][piece] ^= from_to_bb;
 					piece_bb[color][PIECES] ^= from_to_bb;
 					piece_bb[color ^ 1][c_piece] ^= to_bb;
@@ -299,11 +297,14 @@ void make_move(u32 move) {
 								occupied ^= from_to_bb;
 								empty ^= from_to_bb;
 							}
-
 							break;
 				}
 				break;
+		default:
+			break;
 	}
+
+
 }
 
 void unmake_move(u32 move) {

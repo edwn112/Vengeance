@@ -154,6 +154,7 @@ void clearAllBitBoards() {
 	piece_bb[WHITE][KNIGHTS] &= 0;
 	piece_bb[WHITE][ROOKS] &= 0;
 	piece_bb[WHITE][PAWNS] &= 0;
+	piece_bb[WHITE][PIECES] &= 0;
 
 	piece_bb[BLACK][KING] &= 0;
 	piece_bb[BLACK][QUEEN] &= 0;
@@ -161,6 +162,7 @@ void clearAllBitBoards() {
 	piece_bb[BLACK][KNIGHTS] &= 0;
 	piece_bb[BLACK][ROOKS] &= 0;
 	piece_bb[BLACK][PAWNS] &= 0;
+	piece_bb[BLACK][PIECES] &= 0;
 
 //	print_bb(piece_bb[BLACK][KING]);
 }
@@ -187,7 +189,7 @@ void splitTheFENPlease() {
    			break;
     }
 
-    printf("Side to move : %s\n", color==0?"WHITE":"BLACK");
+    printf("Side to move : %s\n", COLOR==0?"WHITE":"BLACK");
 
     for(int i = 0; i < d_array->count; i++) {
     	split(d_array->buffer[i], '/', initFEN, mainFEN);
@@ -251,7 +253,7 @@ void splitTheFENPlease() {
 				//White side    		
 	    			case 'K':
 	   					piece_bb[WHITE][KING] |= returnBB(pos);
-	    				pos--; 			
+						pos--; 			
 	     		//		printf("%s\n", "Black King");
 	    				break;
 					case 'Q':
@@ -305,10 +307,12 @@ void splitTheFENPlease() {
     	}
     }
 
+	piece_bb[WHITE][PIECES] = piece_bb[WHITE][KING] | piece_bb[WHITE][QUEEN] | piece_bb[WHITE][BISHOPS] | piece_bb[WHITE][KNIGHTS] | piece_bb[WHITE][ROOKS] | piece_bb[WHITE][PAWNS];   
+	piece_bb[BLACK][PIECES] = piece_bb[BLACK][KING] | piece_bb[BLACK][QUEEN] | piece_bb[BLACK][BISHOPS] | piece_bb[BLACK][KNIGHTS] | piece_bb[BLACK][ROOKS] | piece_bb[BLACK][PAWNS]; 
     occupied = piece_bb[BLACK][KING] | piece_bb[BLACK][QUEEN] | piece_bb[BLACK][BISHOPS] | piece_bb[BLACK][KNIGHTS] | piece_bb[BLACK][ROOKS] | piece_bb[BLACK][PAWNS] | piece_bb[WHITE][KING] | piece_bb[WHITE][QUEEN] | piece_bb[WHITE][BISHOPS] | piece_bb[WHITE][KNIGHTS] | piece_bb[WHITE][ROOKS] | piece_bb[WHITE][PAWNS];   
     empty = ~occupied;
 
-    print_bb(occupied);
+    print_board(occupied);
 
 	dynarray_for_each(d_array, free);
     dynarray_delete(d_array);
@@ -348,7 +352,8 @@ int main(int argc, char **argv) {
 
 	printf("\n");
 
-//	divide(depth, WHITE);
+	//divide(depth, COLOR);
+	
 	for (int i = 1; i <= depth; i++) {
 
 		ftime(&start);

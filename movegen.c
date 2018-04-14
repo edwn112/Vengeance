@@ -284,8 +284,9 @@ u64 gen_king_attacks(u32 *move_list, u8 pos, u8 color) {
 
 u64 gen_queen_attacks(u32 *move_list, u8 pos, u8 color) {
 	u64 queen_bb = piece_bb[color][QUEEN];
-
+	while(queen_bb) {
 		const u8 from = bit_scan_forward(queen_bb);
+		queen_bb &= queen_bb - 1;
 		
 		u64 attacks = Qmagic(from, occupied) & piece_bb[color ^ 1][PIECES]; 
 
@@ -342,7 +343,7 @@ u64 gen_queen_attacks(u32 *move_list, u8 pos, u8 color) {
 			}
 
 		}
-
+	}
 	return pos;
 }
 
@@ -488,14 +489,11 @@ u64 gen_knight_attacks(u32 *move_list, u8 pos, u8 color) {
 
 u64 gen_rook_attacks(u32 *move_list, u8 pos, u8 color) {
 	u64 rooks_bb = piece_bb[color][ROOKS];
-
 	while(rooks_bb) {
-
 		const u8 from = bit_scan_forward(rooks_bb);
 		rooks_bb &= rooks_bb - 1;
-		
 		u64 attacks = Rmagic(from, occupied) & (piece_bb[color ^ 1][PIECES]); 
-
+	
 		while(attacks) {
 
 			const u8 to = bit_scan_forward(attacks);
@@ -541,11 +539,13 @@ u64 gen_rook_attacks(u32 *move_list, u8 pos, u8 color) {
 
 			if(piece_bb[color ^ 1][PAWNS]) {
 				u64 pawns_bb = piece_bb[color ^ 1][PAWNS];
+	
 				while(pawns_bb) {
 					const u8 sq = bit_scan_forward(pawns_bb);
 					pawns_bb &= pawns_bb - 1;
 
 					if(sq == to) {
+						
 						move_list[pos++] = create_move(0, 0, 1, color, PAWNS, ROOKS, from, to);
 					}
 				}
@@ -565,12 +565,12 @@ u64 gen_pawn_attacks(u32 *move_list, u8 pos, u8 color) {
 		pawns_bb &= pawns_bb - 1;
 
 		u64 attacks;
+
 		if(color) {
 			//black
-			attacks = (((index_bb[from] << 7) & NOT_A_FILE) >> 14) | (((index_bb[from] << 9) & NOT_H_FILE) >> 16);
-
+			attacks = ((index_bb[from] >> 7) & NOT_A_FILE) | ((index_bb[from] >> 9) & NOT_H_FILE);
 		} else {
-			attacks = ((index_bb[from] << 7) & NOT_H_FILE) | ((index_bb[from] << 9) & NOT_A_FILE);
+			attacks = ((index_bb[from] << 7) & NOT_H_FILE) | ((index_bb[from] << 9)  & NOT_A_FILE);
 		}
 		
 		/*
@@ -586,7 +586,6 @@ u64 gen_pawn_attacks(u32 *move_list, u8 pos, u8 color) {
 			if(piece_bb[color ^ 1][PAWNS]) {
 				u64 pawns_bb = piece_bb[color ^ 1][PAWNS];
 				while(pawns_bb) {
-
 					const u8 sq = bit_scan_forward(pawns_bb);
 					pawns_bb &= pawns_bb - 1;
 
