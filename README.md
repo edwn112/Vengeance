@@ -1,4 +1,6 @@
 # Vengeance
-Chess engine written in C
--uses bitboards for board representation
--
+
+A hobby chess engine
+  - uses C as the main language
+  - using bitboards
+  
